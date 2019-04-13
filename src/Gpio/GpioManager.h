@@ -1,8 +1,9 @@
 #ifndef GPIOMANAGER_H
 #define GPIOMANAGER_H
 
-#include <unordered_map>
 #include "GpioController.h"
+#include <unordered_map>
+#include <memory>
 
 namespace GPIO
 {
@@ -20,7 +21,7 @@ public:
     // bool getValueFromPin(int pin) const;
 
 private:
-    std::unordered_map<int, GpioController> m_controllers;
+    std::unordered_map<int, std::shared_ptr<GpioController>> m_controllers;
 };
 }  // namespace GPIO
 

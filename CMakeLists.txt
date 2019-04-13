@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.13)
+cmake_minimum_required(VERSION 3.7)
 
 project(iot_project)
 
@@ -11,5 +11,4 @@ add_executable(iot_project
     src/Gpio/GpioManager.h
     src/Gpio/GpioManager.cpp)
 
-target_compile_features(iot_project PRIVATE cxx_std_17)
-
+set_property(TARGET iot_project PROPERTY CXX_STANDARD 14)
