@@ -10,7 +10,7 @@ class Message
 public:
     explicit Message(MessageType type) noexcept;
     Message() = delete;
-    virtual ~Message();
+    virtual ~Message() noexcept;
 
     MessageType getType() const noexcept { return m_type; }
 

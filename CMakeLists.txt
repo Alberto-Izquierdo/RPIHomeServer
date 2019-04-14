@@ -8,6 +8,8 @@ add_executable(iot_project
     src/main.cpp
     src/Core/BaseModule.h
     src/Core/BaseModule.cpp
+    src/Core/MultithreadQueue.h
+    src/Core/MultithreadQueue.inl
     src/Core/Communication/MessageTypes.h
     src/Core/Communication/Message.h
     src/Core/Communication/Message.cpp

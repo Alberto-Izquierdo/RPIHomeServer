@@ -2,6 +2,7 @@
 #define BASEMODULE_H
 
 #include "Communication/MessageTypes.h"
+#include "MultithreadQueue.h"
 #include <unordered_map>
 #include <vector>
 #include <memory>
@@ -18,8 +19,8 @@ class BaseModule
 {
 public:
     enum class Type { NONE };
-    explicit BaseModule(Type type, std::shared_ptr<std::queue<std::shared_ptr<Message>>> &outputQueue) noexcept;
-    virtual ~BaseModule();
+    explicit BaseModule(Type type, std::shared_ptr<MultithreadQueue<std::shared_ptr<Message>>> &outputQueue) noexcept;
+    virtual ~BaseModule() noexcept;
 
     Type getType() const noexcept { return m_type; }
 
@@ -37,7 +38,7 @@ public:
 
     std::vector<MessageType> getAcceptedMessages() const noexcept;
 
-    std::shared_ptr<std::queue<std::shared_ptr<Message>>> &getInputQueue() noexcept { return m_inputQueue; }
+    std::shared_ptr<MultithreadQueue<std::shared_ptr<Message>>> &getInputQueue() noexcept { return m_inputQueue; }
 
 protected:
     using messageHanlderFunction = void (BaseModule::*)(const std::shared_ptr<Message>);
@@ -48,11 +49,9 @@ private:
     Type m_type;
     std::unordered_map<MessageType, messageHanlderFunction> m_messageHandlers;
     std::atomic_bool m_exit;
-    std::shared_ptr<std::condition_variable> m_conditionVariable;
-    std::shared_ptr<std::mutex> m_mutex;
     // TODO: change this to multithreaded queues
-    std::shared_ptr<std::queue<std::shared_ptr<Message>>> m_inputQueue;
-    std::shared_ptr<std::queue<std::shared_ptr<Message>>> m_outputQueue;
+    std::shared_ptr<MultithreadQueue<std::shared_ptr<Message>>> m_inputQueue;
+    std::shared_ptr<MultithreadQueue<std::shared_ptr<Message>>> m_outputQueue;
 };
 }  // namespace core
 

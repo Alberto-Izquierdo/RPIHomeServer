@@ -3,23 +3,22 @@
 
 using namespace core;
 
-BaseModule::BaseModule(Type type, std::shared_ptr<std::queue<std::shared_ptr<Message>>> &outputQueue) noexcept
+BaseModule::BaseModule(Type type, std::shared_ptr<MultithreadQueue<std::shared_ptr<Message>>> &outputQueue) noexcept
     : m_type(type)
     , m_exit(false)
-    , m_inputQueue(std::make_shared<std::queue<std::shared_ptr<Message>>>())
+    , m_inputQueue(std::make_shared<MultithreadQueue<std::shared_ptr<Message>>>())
     , m_outputQueue(outputQueue)
 {
 }
 
-BaseModule::~BaseModule()
+BaseModule::~BaseModule() noexcept
 {
 }
 
 void BaseModule::update() noexcept
 {
-    std::unique_lock<std::mutex> lock(*m_mutex);
-    m_conditionVariable->wait(lock);
-    while (!m_inputQueue->empty()) {
+    m_inputQueue->wait();
+    while (!m_inputQueue->isEmpty()) {
         handleMessage(m_inputQueue->front());
         m_inputQueue->pop();
     }
@@ -37,7 +36,6 @@ void BaseModule::exit() noexcept
 {
     specificExit();
     m_exit = true;
-    m_conditionVariable->notify_one();
 }
 
 void BaseModule::handleMessage(const std::shared_ptr<Message> message) noexcept

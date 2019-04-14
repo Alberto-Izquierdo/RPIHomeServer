@@ -2,12 +2,12 @@
 
 using namespace core;
 
-Message::Message(MessageType type)
+Message::Message(MessageType type) noexcept
     : m_type(type)
 {
 }
 
-Message::~Message()
+Message::~Message() noexcept
 {
 }
 

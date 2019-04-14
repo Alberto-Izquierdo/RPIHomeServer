@@ -4,11 +4,11 @@
 using namespace core;
 
 MessageDispatcher::MessageDispatcher() noexcept
-    : m_inputQueue(std::make_shared<std::queue<std::shared_ptr<Message>>>())
+    : m_inputQueue(std::make_shared<MultithreadQueue<std::shared_ptr<Message>>>())
 {
 }
 
-MessageDispatcher::~MessageDispatcher()
+MessageDispatcher::~MessageDispatcher() noexcept
 {
 }
 
@@ -21,8 +21,4 @@ void MessageDispatcher::setup(std::vector<std::shared_ptr<BaseModule>> &modules)
             m_outputQueues.insert({messageType, queue});
         }
     }
-}
-
-void MessageDispatcher::update() noexcept
-{
 }
