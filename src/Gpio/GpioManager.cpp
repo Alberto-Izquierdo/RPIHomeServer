@@ -7,7 +7,8 @@ void GpioManager::setupController(int pin) noexcept
 {
     auto it = m_controllers.find(pin);
     if (it == m_controllers.end()) {
-        m_controllers.insert({pin, std::make_shared<GpioController>((std::to_string(pin)))});
+        auto controller = std::unique_ptr<GpioController>(new GpioController(std::to_string(pin)));
+        m_controllers.insert({pin, std::move(controller)});
     } else {
         std::cout << "OPERATION FAILED: Unable to setup pin " << pin << ", pin already in use" << std::endl;
     }

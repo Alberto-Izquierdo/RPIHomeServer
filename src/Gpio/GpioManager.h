@@ -21,7 +21,7 @@ public:
     // bool getValueFromPin(int pin) const;
 
 private:
-    std::unordered_map<int, std::shared_ptr<GpioController>> m_controllers;
+    std::unordered_map<int, std::unique_ptr<GpioController>> m_controllers;
 };
 }  // namespace GPIO
 

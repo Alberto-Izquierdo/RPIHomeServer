@@ -8,6 +8,7 @@ namespace GPIO {
 class GpioController {
   friend class GpioManager;
 
+  explicit GpioController(const std::string &pin);
   GpioController() = delete;
 
   bool on() noexcept;
@@ -18,7 +19,6 @@ class GpioController {
   std::string m_pin;
   bool m_value;
 public:
-  explicit GpioController(const std::string &pin);
   ~GpioController();
 };
 } // namespace GPIO
