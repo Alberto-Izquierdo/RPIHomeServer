@@ -17,7 +17,7 @@ BaseModule::~BaseModule() noexcept
 
 void BaseModule::update() noexcept
 {
-    m_inputQueue->wait();
+    m_inputQueue->waitForPushIfEmpty();
     while (!m_inputQueue->isEmpty()) {
         handleMessage(m_inputQueue->front());
         m_inputQueue->pop();

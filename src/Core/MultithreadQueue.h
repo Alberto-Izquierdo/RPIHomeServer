@@ -17,59 +17,16 @@ public:
     void push(T &value) noexcept;
     T front() noexcept;
     void pop() noexcept;
-    bool isEmpty() noexcept;
-    void wait() noexcept;
+    bool isEmpty() const noexcept;
+    void waitForPushIfEmpty() noexcept;
 
 private:
     std::queue<T> m_data;
+    std::mutex m_dataMutex;
     std::condition_variable m_conditionVariable;
-    std::mutex m_mutex;
+    std::mutex m_waitMutex;
 };
-
-template <typename T>
-MultithreadQueue<T>::MultithreadQueue() noexcept
-{
-}
-
-template <typename T>
-MultithreadQueue<T>::~MultithreadQueue() noexcept
-{
-}
-
-template <typename T>
-void MultithreadQueue<T>::push(T &value) noexcept
-{
-    auto lock = std::unique_lock<std::mutex>(m_mutex);
-    m_data.push(value);
-    m_conditionVariable.notify_one();
-}
-
-template <typename T>
-T MultithreadQueue<T>::front() noexcept
-{
-    auto lock = std::unique_lock<std::mutex>(m_mutex);
-    return m_data.front();
-}
-
-template <typename T>
-void MultithreadQueue<T>::pop() noexcept
-{
-    auto lock = std::unique_lock<std::mutex>(m_mutex);
-    m_data.pop();
-}
-
-template <typename T>
-bool MultithreadQueue<T>::isEmpty() noexcept
-{
-    return m_data.empty();
-}
-
-template <typename T>
-void MultithreadQueue<T>::wait() noexcept
-{
-    auto lock = std::unique_lock<std::mutex>(m_mutex);
-    m_conditionVariable.wait(lock);
-}
+#include "MultithreadQueue.inl"
 }  // namespace core
 
 #endif
