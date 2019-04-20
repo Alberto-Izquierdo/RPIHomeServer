@@ -17,4 +17,5 @@ add_library(core
     Modules/TelegramBotModule.h
     Modules/TelegramBotModule.cpp)
 
+target_link_libraries(core PRIVATE ${CONAN_LIBS})
 target_link_libraries(core PUBLIC gpio)
