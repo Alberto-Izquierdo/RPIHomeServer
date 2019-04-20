@@ -3,9 +3,7 @@
 
 namespace core
 {
-enum MessageType {
-
-};
+enum class MessageType { EXIT };
 }  // namespace core
 
 #endif

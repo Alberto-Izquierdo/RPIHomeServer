@@ -3,7 +3,7 @@
 
 using namespace core;
 
-BaseModule::BaseModule(Type type, std::shared_ptr<MultithreadQueue<std::shared_ptr<Message>>> &outputQueue) noexcept
+BaseModule::BaseModule(Type type, std::shared_ptr<MultithreadQueue<std::shared_ptr<Message>>> outputQueue) noexcept
     : m_type(type)
     , m_exit(false)
     , m_inputQueue(std::make_shared<MultithreadQueue<std::shared_ptr<Message>>>())

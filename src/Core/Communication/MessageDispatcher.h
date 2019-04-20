@@ -4,6 +4,7 @@
 #include "MessageTypes.h"
 #include "../MultithreadQueue.h"
 #include <unordered_map>
+#include <vector>
 #include <memory>
 
 namespace core
@@ -17,13 +18,13 @@ public:
     MessageDispatcher() noexcept;
     ~MessageDispatcher() noexcept;
 
-    void setup(std::vector<std::shared_ptr<BaseModule>> &modules) noexcept;
+    void setup(const std::vector<BaseModule *> &modules) noexcept;
 
-    std::shared_ptr<MultithreadQueue<std::shared_ptr<Message>>> getInputQueue() noexcept { return m_inputQueue; }
+    void handleMessage(const std::shared_ptr<Message> message) noexcept;
 
 private:
-    std::unordered_map<MessageType, std::shared_ptr<MultithreadQueue<std::shared_ptr<Message>>>> m_outputQueues;
-    std::shared_ptr<MultithreadQueue<std::shared_ptr<Message>>> m_inputQueue;
+    std::unordered_map<MessageType, std::vector<std::shared_ptr<MultithreadQueue<std::shared_ptr<Message>>>>>
+        m_outputQueues;
 };
 }  // namespace core
 

@@ -14,7 +14,7 @@ public:
     MultithreadQueue() noexcept;
     ~MultithreadQueue() noexcept;
 
-    void push(T &value) noexcept;
+    void push(T value) noexcept;
     T front() noexcept;
     void pop() noexcept;
     bool isEmpty() const noexcept;

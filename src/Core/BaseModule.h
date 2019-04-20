@@ -18,9 +18,10 @@ class Message;
 class BaseModule
 {
 public:
-    enum class Type { NONE };
-    explicit BaseModule(Type type, std::shared_ptr<MultithreadQueue<std::shared_ptr<Message>>> &outputQueue) noexcept;
+    enum class Type { NONE, COMMUNICATION };
+    explicit BaseModule(Type type, std::shared_ptr<MultithreadQueue<std::shared_ptr<Message>>> outputQueue) noexcept;
     virtual ~BaseModule() noexcept;
+    explicit BaseModule() = delete;
 
     Type getType() const noexcept { return m_type; }
 
@@ -34,11 +35,15 @@ public:
 
     virtual void specificExit() noexcept = 0;
 
-    void handleMessage(const std::shared_ptr<Message> message) noexcept;
+    virtual void handleMessage(const std::shared_ptr<Message> message) noexcept;
 
     std::vector<MessageType> getAcceptedMessages() const noexcept;
 
     std::shared_ptr<MultithreadQueue<std::shared_ptr<Message>>> &getInputQueue() noexcept { return m_inputQueue; }
+
+    // Delete copy/assign
+    BaseModule(const BaseModule &) = delete;
+    BaseModule &operator=(const BaseModule &) const = delete;
 
 protected:
     using messageHanlderFunction = void (BaseModule::*)(const std::shared_ptr<Message>);

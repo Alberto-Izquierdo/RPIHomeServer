@@ -9,7 +9,7 @@ MultithreadQueue<T>::~MultithreadQueue() noexcept
 }
 
 template <typename T>
-void MultithreadQueue<T>::push(T &value) noexcept
+void MultithreadQueue<T>::push(T value) noexcept
 {
     auto lock = std::unique_lock<std::mutex>(m_dataMutex);
     m_data.push(value);

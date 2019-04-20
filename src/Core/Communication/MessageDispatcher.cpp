@@ -1,10 +1,11 @@
 #include "MessageDispatcher.h"
+#include "Message.h"
 #include "../BaseModule.h"
+#include "../MultithreadQueue.h"
 
 using namespace core;
 
 MessageDispatcher::MessageDispatcher() noexcept
-    : m_inputQueue(std::make_shared<MultithreadQueue<std::shared_ptr<Message>>>())
 {
 }
 
@@ -12,13 +13,30 @@ MessageDispatcher::~MessageDispatcher() noexcept
 {
 }
 
-void MessageDispatcher::setup(std::vector<std::shared_ptr<BaseModule>> &modules) noexcept
+void MessageDispatcher::setup(const std::vector<BaseModule *> &modules) noexcept
 {
     for (auto &module : modules) {
         auto messageTypes = module->getAcceptedMessages();
         auto &queue = module->getInputQueue();
         for (auto messageType : messageTypes) {
-            m_outputQueues.insert({messageType, queue});
+            auto it = m_outputQueues.find(messageType);
+            if (it == m_outputQueues.end()) {
+                m_outputQueues.insert({messageType, {queue}});
+            } else {
+                it->second.push_back(queue);
+            }
         }
+    }
+}
+
+void MessageDispatcher::handleMessage(const std::shared_ptr<Message> message) noexcept
+{
+    auto it = m_outputQueues.find(message->getType());
+    if (it != m_outputQueues.end()) {
+        for (auto &queue : it->second) {
+            queue->push(message);
+        }
+    } else {
+        // Handle error: output queue not found
     }
 }
