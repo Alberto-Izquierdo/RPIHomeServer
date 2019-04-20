@@ -18,7 +18,7 @@ public:
     T front() noexcept;
     void pop() noexcept;
     bool isEmpty() const noexcept;
-    void waitForPushIfEmpty() noexcept;
+    void waitForPushIfEmpty(int maxSecondsWait = 0) noexcept;
 
 private:
     std::queue<T> m_data;

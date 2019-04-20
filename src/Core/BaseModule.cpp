@@ -29,11 +29,11 @@ void BaseModule::update() noexcept
 void BaseModule::start() noexcept
 {
     specificStart();
-    std::cout << getModuleName() << "module started!" << std::endl;
+    std::cout << getModuleName() << " module started!" << std::endl;
     while (!m_exit.load()) {
         update();
     }
-    std::cout << getModuleName() << "module closing!" << std::endl;
+    std::cout << getModuleName() << " module closing!" << std::endl;
 }
 
 void BaseModule::exit(const std::shared_ptr<Message> /*message*/) noexcept
@@ -65,4 +65,9 @@ std::vector<MessageType> BaseModule::getAcceptedMessages() const noexcept
 void BaseModule::addMessageHandler(MessageType messageType, messageHanlderFunction function)
 {
     m_messageHandlers[messageType] = function;
+}
+
+std::shared_ptr<MultithreadQueue<std::shared_ptr<Message>>> BaseModule::getOutputQueue() const noexcept
+{
+    return m_outputQueue;
 }

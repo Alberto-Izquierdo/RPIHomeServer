@@ -1,5 +1,3 @@
-#include <chrono>
-#include <thread>
 #include <Core/App.h>
 
 int main()

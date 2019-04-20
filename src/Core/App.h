@@ -24,11 +24,11 @@ public:
 
     void exit() noexcept;
 
+    static void signalHandler(int signal);
+
     // Delete copy/assign
     App(const App &) = delete;
     App &operator=(const App &) const = delete;
-
-    static void signalHandler(int signal);
 
 private:
     App() noexcept;

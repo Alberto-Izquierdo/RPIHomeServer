@@ -1,6 +1,7 @@
 #include "App.h"
 #include <Core/Modules/CommunicationModule.h>
 #include <Core/Modules/LightModule.h>
+#include <Core/Modules/TelegramBotModule.h>
 #include <Core/Communication/Message.h>
 #include <Gpio/GpioManager.h>
 #include <thread>
@@ -29,8 +30,8 @@ void App::init() noexcept
     auto communicationModule = std::make_unique<core::CommunicationModule>();
     auto &communicationQueue = communicationModule->getInputQueue();
 
-    auto lightModule = std::make_unique<core::LightModule>(m_gpioManager, communicationQueue);
-    m_modules.push_back(std::move(lightModule));
+    m_modules.push_back(std::make_unique<core::LightModule>(m_gpioManager, communicationQueue));
+    m_modules.push_back(std::make_unique<core::TelegramBotModule>(communicationQueue));
 
     // Setup message dispatcher
     communicationModule->setup(m_modules);
