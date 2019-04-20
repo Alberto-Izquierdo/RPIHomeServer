@@ -4,6 +4,8 @@
 
 using namespace core;
 
+const std::string CommunicationModule::m_moduleName = "Communication";
+
 CommunicationModule::CommunicationModule() noexcept
     : BaseModule(Type::COMMUNICATION, nullptr)
     , m_messageDispatcher(std::make_unique<MessageDispatcher>())
@@ -22,7 +24,7 @@ void CommunicationModule::specificExit() noexcept
 {
 }
 
-void CommunicationModule::setup(const std::vector<BaseModule *> &modules) noexcept
+void CommunicationModule::setup(const std::vector<std::unique_ptr<BaseModule>> &modules) noexcept
 {
     m_messageDispatcher->setup(modules);
 }
@@ -30,7 +32,12 @@ void CommunicationModule::setup(const std::vector<BaseModule *> &modules) noexce
 void CommunicationModule::handleMessage(const std::shared_ptr<Message> message) noexcept
 {
     if (message->getType() == core::MessageType::EXIT) {
-        exit();
+        exit(message);
     }
     m_messageDispatcher->handleMessage(message);
+}
+
+const std::string &CommunicationModule::getModuleName() const noexcept
+{
+    return m_moduleName;
 }

@@ -4,6 +4,11 @@
 #include <vector>
 #include <memory>
 
+namespace GPIO
+{
+class GpioManager;
+}  // namespace GPIO
+
 namespace core
 {
 class BaseModule;
@@ -12,19 +17,24 @@ class BaseModule;
 class App
 {
 public:
-    App() noexcept;
-    ~App() noexcept;
-
+    static App &getInstance();
     void init() noexcept;
 
     void start() noexcept;
+
+    void exit() noexcept;
 
     // Delete copy/assign
     App(const App &) = delete;
     App &operator=(const App &) const = delete;
 
+    static void signalHandler(int signal);
+
 private:
+    App() noexcept;
+    ~App() noexcept;
     std::vector<std::unique_ptr<core::BaseModule>> m_modules;
+    std::shared_ptr<GPIO::GpioManager> m_gpioManager;
 };
 
 #endif  // APP_H

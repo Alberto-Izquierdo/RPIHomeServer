@@ -18,12 +18,14 @@ class Message;
 class BaseModule
 {
 public:
-    enum class Type { NONE, COMMUNICATION };
+    enum class Type { COMMUNICATION, LIGHT };
     explicit BaseModule(Type type, std::shared_ptr<MultithreadQueue<std::shared_ptr<Message>>> outputQueue) noexcept;
     virtual ~BaseModule() noexcept;
     explicit BaseModule() = delete;
 
     Type getType() const noexcept { return m_type; }
+
+    virtual const std::string &getModuleName() const noexcept = 0;
 
     void update() noexcept;
 
@@ -31,7 +33,7 @@ public:
 
     virtual void specificStart() noexcept = 0;
 
-    void exit() noexcept;
+    void exit(const std::shared_ptr<Message> message) noexcept;
 
     virtual void specificExit() noexcept = 0;
 
@@ -48,7 +50,7 @@ public:
 protected:
     using messageHanlderFunction = void (BaseModule::*)(const std::shared_ptr<Message>);
 
-    void addMessageHandler(MessageType, messageHanlderFunction);
+    void addMessageHandler(MessageType messageType, messageHanlderFunction function);
 
 private:
     Type m_type;

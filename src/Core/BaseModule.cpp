@@ -1,5 +1,6 @@
 #include "BaseModule.h"
 #include "Communication/Message.h"
+#include <iostream>
 
 using namespace core;
 
@@ -9,6 +10,7 @@ BaseModule::BaseModule(Type type, std::shared_ptr<MultithreadQueue<std::shared_p
     , m_inputQueue(std::make_shared<MultithreadQueue<std::shared_ptr<Message>>>())
     , m_outputQueue(outputQueue)
 {
+    addMessageHandler(MessageType::EXIT, &BaseModule::exit);
 }
 
 BaseModule::~BaseModule() noexcept
@@ -27,12 +29,14 @@ void BaseModule::update() noexcept
 void BaseModule::start() noexcept
 {
     specificStart();
+    std::cout << getModuleName() << "module started!" << std::endl;
     while (!m_exit.load()) {
         update();
     }
+    std::cout << getModuleName() << "module closing!" << std::endl;
 }
 
-void BaseModule::exit() noexcept
+void BaseModule::exit(const std::shared_ptr<Message> /*message*/) noexcept
 {
     specificExit();
     m_exit = true;
@@ -56,4 +60,9 @@ std::vector<MessageType> BaseModule::getAcceptedMessages() const noexcept
         result.push_back(pair.first);
     }
     return result;
+}
+
+void BaseModule::addMessageHandler(MessageType messageType, messageHanlderFunction function)
+{
+    m_messageHandlers[messageType] = function;
 }

@@ -13,7 +13,7 @@ MessageDispatcher::~MessageDispatcher() noexcept
 {
 }
 
-void MessageDispatcher::setup(const std::vector<BaseModule *> &modules) noexcept
+void MessageDispatcher::setup(const std::vector<std::unique_ptr<BaseModule>> &modules) noexcept
 {
     for (auto &module : modules) {
         auto messageTypes = module->getAcceptedMessages();

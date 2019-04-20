@@ -3,7 +3,7 @@
 
 namespace core
 {
-enum class MessageType { EXIT };
+enum class MessageType { EXIT, LIGHT_ON, LIGHT_OFF };
 }  // namespace core
 
 #endif
