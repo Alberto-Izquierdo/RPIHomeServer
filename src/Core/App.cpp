@@ -1,8 +1,8 @@
 #include "App.h"
-#include "Modules/CommunicationModule.h"
-#include "Modules/LightModule.h"
-#include "Communication/Message.h"
-#include "../Gpio/GpioManager.h"
+#include <Core/Modules/CommunicationModule.h>
+#include <Core/Modules/LightModule.h>
+#include <Core/Communication/Message.h>
+#include <Gpio/GpioManager.h>
 #include <thread>
 #include <iostream>
 #include <signal.h>

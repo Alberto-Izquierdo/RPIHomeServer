@@ -1,7 +1,7 @@
 #ifndef LIGHTMODULE_H
 #define LIGHTMODULE_H
 
-#include "../BaseModule.h"
+#include <Core/BaseModule.h>
 
 namespace GPIO
 {

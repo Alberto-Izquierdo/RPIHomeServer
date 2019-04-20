@@ -1,8 +1,8 @@
 #ifndef MESSAGEDISPATCHER_H
 #define MESSAGEDISPATCHER_H
 
-#include "MessageTypes.h"
-#include "../MultithreadQueue.h"
+#include <Core/Communication/MessageTypes.h>
+#include <Core/MultithreadQueue.h>
 #include <unordered_map>
 #include <vector>
 #include <memory>

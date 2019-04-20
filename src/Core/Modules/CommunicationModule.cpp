@@ -1,6 +1,6 @@
 #include "CommunicationModule.h"
-#include "../Communication/MessageDispatcher.h"
-#include "../Communication/Message.h"
+#include <Core/Communication/MessageDispatcher.h>
+#include <Core/Communication/Message.h>
 
 using namespace core;
 

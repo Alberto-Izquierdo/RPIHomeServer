@@ -1,7 +1,7 @@
 #ifndef COMMUNICATIONMODULE_H
 #define COMMUNICATIONMODULE_H
 
-#include "../BaseModule.h"
+#include <Core/BaseModule.h>
 
 namespace core
 {

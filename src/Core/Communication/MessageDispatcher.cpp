@@ -1,7 +1,7 @@
 #include "MessageDispatcher.h"
-#include "Message.h"
-#include "../BaseModule.h"
-#include "../MultithreadQueue.h"
+#include <Core/Communication/Message.h>
+#include <Core/BaseModule.h>
+#include <Core/MultithreadQueue.h>
 
 using namespace core;
 

@@ -1,5 +1,5 @@
 #include "LightModule.h"
-#include "../../Gpio/GpioManager.h"
+#include <Gpio/GpioManager.h>
 #include <iostream>
 
 using namespace core;

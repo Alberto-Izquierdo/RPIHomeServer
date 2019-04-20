@@ -1,7 +1,7 @@
 #ifndef MESSAGE_H
 #define MESSAGE_H
 
-#include "MessageTypes.h"
+#include <Core/Communication/MessageTypes.h>
 
 namespace core
 {

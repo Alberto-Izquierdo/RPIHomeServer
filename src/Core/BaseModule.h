@@ -1,8 +1,8 @@
 #ifndef BASEMODULE_H
 #define BASEMODULE_H
 
-#include "Communication/MessageTypes.h"
-#include "MultithreadQueue.h"
+#include <Core/Communication/MessageTypes.h>
+#include <Core/MultithreadQueue.h>
 #include <unordered_map>
 #include <vector>
 #include <memory>

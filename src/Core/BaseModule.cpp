@@ -1,5 +1,5 @@
 #include "BaseModule.h"
-#include "Communication/Message.h"
+#include <Core/Communication/Message.h>
 #include <iostream>
 
 using namespace core;
