@@ -31,7 +31,8 @@ void App::init() noexcept
     auto &communicationQueue = communicationModule->getInputQueue();
 
     m_modules.push_back(std::make_unique<core::LightModule>(m_gpioManager, communicationQueue));
-    m_modules.push_back(std::make_unique<core::TelegramBotModule>(communicationQueue));
+    const char *token = std::getenv("HOME_BOT_TOKEN");
+    m_modules.push_back(std::make_unique<core::TelegramBotModule>(token, communicationQueue));
 
     // Setup message dispatcher
     communicationModule->setup(m_modules);

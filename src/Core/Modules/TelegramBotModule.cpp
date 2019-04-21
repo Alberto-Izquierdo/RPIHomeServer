@@ -7,8 +7,11 @@ using namespace core;
 
 const std::string TelegramBotModule::m_moduleName = "TelegramBot";
 
-TelegramBotModule::TelegramBotModule(std::shared_ptr<MultithreadQueue<std::shared_ptr<Message>>> &outputQueue) noexcept
+TelegramBotModule::TelegramBotModule(const char *token,
+                                     std::shared_ptr<MultithreadQueue<std::shared_ptr<Message>>> &outputQueue) noexcept
     : BaseModule(BaseModule::Type::TELEGRAM_BOT, outputQueue)
+    , m_bot(token)
+    , m_longPoll(m_bot, 100, 5)
 {
 }
 
@@ -18,11 +21,14 @@ TelegramBotModule::~TelegramBotModule() noexcept
 
 void TelegramBotModule::specificStart() noexcept
 {
+    m_bot.getEvents().onCommand("start", [this](TgBot::Message::Ptr message) { this->welcomeMessage(); });
+    m_bot.getEvents().onCommand("lighton", [this](TgBot::Message::Ptr message) { this->turnLightOn(); });
+    m_bot.getEvents().onCommand("lightoff", [this](TgBot::Message::Ptr message) { this->turnLightOff(); });
 }
 
 void TelegramBotModule::update() noexcept
 {
-    // TODO: Poll telegram server
+    m_longPoll.start();
     getInputQueue()->waitForPushIfEmpty(2);
     while (!getInputQueue()->isEmpty()) {
         handleMessage(getInputQueue()->front());
@@ -39,12 +45,17 @@ const std::string &TelegramBotModule::getModuleName() const noexcept
     return m_moduleName;
 }
 
-void TelegramBotModule::turnOnLight() noexcept
+void TelegramBotModule::turnLightOn() noexcept
 {
     getOutputQueue()->push(std::make_shared<Message>(MessageType::LIGHT_ON));
 }
 
-void TelegramBotModule::turnOffLight() noexcept
+void TelegramBotModule::turnLightOff() noexcept
 {
     getOutputQueue()->push(std::make_shared<Message>(MessageType::LIGHT_OFF));
+}
+
+void TelegramBotModule::welcomeMessage() noexcept
+{
+    // TODO: send options to user
 }
