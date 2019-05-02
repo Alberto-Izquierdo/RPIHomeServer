@@ -27,17 +27,17 @@ App::~App() noexcept
 void App::init() noexcept
 {
     // Build modules
-    auto communicationModule = std::make_unique<core::CommunicationModule>();
+    auto communicationModule(new core::CommunicationModule());
     auto &communicationQueue = communicationModule->getInputQueue();
 
-    m_modules.push_back(std::make_unique<core::LightModule>(m_gpioManager, communicationQueue));
+    m_modules.emplace_back(new core::LightModule(m_gpioManager, communicationQueue));
     const char *token = std::getenv("HOME_BOT_TOKEN");
-    m_modules.push_back(std::make_unique<core::TelegramBotModule>(token, communicationQueue));
+    m_modules.emplace_back(new core::TelegramBotModule(token, communicationQueue));
 
     // Setup message dispatcher
     communicationModule->setup(m_modules);
 
-    m_modules.push_back(std::move(communicationModule));
+    m_modules.emplace_back(std::move(communicationModule));
     std::cout << "App init" << std::endl;
 }
 

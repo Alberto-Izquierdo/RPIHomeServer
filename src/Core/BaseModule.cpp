@@ -64,7 +64,7 @@ std::vector<MessageType> BaseModule::getAcceptedMessages() const noexcept
 
 void BaseModule::addMessageHandler(MessageType messageType, messageHanlderFunction function)
 {
-    m_messageHandlers[messageType] = function;
+    m_messageHandlers.insert(std::make_pair(messageType, function));
 }
 
 std::shared_ptr<MultithreadQueue<std::shared_ptr<Message>>> BaseModule::getOutputQueue() const noexcept

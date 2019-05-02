@@ -21,7 +21,9 @@ void MessageDispatcher::setup(const std::vector<std::unique_ptr<BaseModule>> &mo
         for (auto messageType : messageTypes) {
             auto it = m_outputQueues.find(messageType);
             if (it == m_outputQueues.end()) {
-                m_outputQueues.insert({messageType, {queue}});
+                std::vector<std::shared_ptr<MultithreadQueue<std::shared_ptr<Message>>>> queues;
+                queues.emplace_back(queue);
+                m_outputQueues.insert(std::make_pair(messageType, queues));
             } else {
                 it->second.push_back(queue);
             }

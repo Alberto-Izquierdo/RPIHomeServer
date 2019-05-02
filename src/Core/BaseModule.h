@@ -18,7 +18,7 @@ class Message;
 class BaseModule
 {
 public:
-    enum class Type { COMMUNICATION, LIGHT, TELEGRAM_BOT };
+    enum Type { COMMUNICATION, LIGHT, TELEGRAM_BOT };
     explicit BaseModule(Type type, std::shared_ptr<MultithreadQueue<std::shared_ptr<Message>>> outputQueue) noexcept;
     virtual ~BaseModule() noexcept;
     explicit BaseModule() = delete;
@@ -56,9 +56,8 @@ protected:
 
 private:
     Type m_type;
-    std::unordered_map<MessageType, messageHanlderFunction> m_messageHandlers;
+    std::unordered_map<MessageType, messageHanlderFunction, std::hash<int>> m_messageHandlers;
     std::atomic_bool m_exit;
-    // TODO: change this to multithreaded queues
     std::shared_ptr<MultithreadQueue<std::shared_ptr<Message>>> m_inputQueue;
     std::shared_ptr<MultithreadQueue<std::shared_ptr<Message>>> m_outputQueue;
 };

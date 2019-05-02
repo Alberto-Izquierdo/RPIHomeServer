@@ -23,7 +23,7 @@ public:
     void handleMessage(const std::shared_ptr<Message> message) noexcept;
 
 private:
-    std::unordered_map<MessageType, std::vector<std::shared_ptr<MultithreadQueue<std::shared_ptr<Message>>>>>
+    std::unordered_map<MessageType, std::vector<std::shared_ptr<MultithreadQueue<std::shared_ptr<Message>>>>, std::hash<int>>
         m_outputQueues;
 };
 }  // namespace core

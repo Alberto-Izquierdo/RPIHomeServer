@@ -10,7 +10,7 @@ LightModule::LightModule(std::shared_ptr<GPIO::GpioManager> &gpioManager,
                          std::shared_ptr<MultithreadQueue<std::shared_ptr<Message>>> &outputQueue) noexcept
     : BaseModule(BaseModule::Type::LIGHT, outputQueue)
     , m_gpioManager(gpioManager)
-    , m_pinAssigned(17)
+    , m_pinAssigned(18)
 {
     m_gpioManager->setupController(m_pinAssigned);
     addMessageHandler(core::MessageType::LIGHT_ON,

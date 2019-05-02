@@ -7,8 +7,8 @@ using namespace core;
 const std::string CommunicationModule::m_moduleName = "Communication";
 
 CommunicationModule::CommunicationModule() noexcept
-    : BaseModule(Type::COMMUNICATION, nullptr)
-    , m_messageDispatcher(std::make_unique<MessageDispatcher>())
+    : BaseModule(BaseModule::Type::COMMUNICATION, nullptr)
+    , m_messageDispatcher(new MessageDispatcher())
 {
 }
 
