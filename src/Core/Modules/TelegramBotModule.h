@@ -18,14 +18,17 @@ public:
     void specificExit() noexcept final;
     const std::string &getModuleName() const noexcept final;
 
-    void turnLightOn() noexcept;
-    void turnLightOff() noexcept;
-    void welcomeMessage() noexcept;
+    void turnLightOn(TgBot::Message::Ptr message) noexcept;
+    void turnLightOff(TgBot::Message::Ptr message) noexcept;
+    void welcomeMessage(TgBot::Message::Ptr message) noexcept;
 
 private:
+    void sendButtons(int64_t messageId, const std::string &messageToShow);
+
     static const std::string m_moduleName;
     TgBot::Bot m_bot;
     TgBot::TgLongPoll m_longPoll;
+    std::vector<std::string> m_userButtons;
 };
 }  // namespace core
 
