@@ -23,7 +23,6 @@ private:
     bool setValue(const std::string &value) noexcept;
 
     std::string m_pin;
-    bool m_value;
 };
 }  // namespace GPIO
 

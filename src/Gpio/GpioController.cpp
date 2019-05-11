@@ -7,7 +7,6 @@ using namespace GPIO;
 
 GpioController::GpioController(const std::string &pin)
     : m_pin(pin)
-    , m_value(false)
 {
     std::string exportStr = "/sys/class/gpio/export";
     std::ofstream exportGpio(exportStr.c_str());
@@ -30,6 +29,7 @@ GpioController::GpioController(const std::string &pin)
 
 GpioController::~GpioController()
 {
+    off();
     std::string unexportStr = "/sys/class/gpio/unexport";
     std::ofstream unexportGpio(unexportStr.c_str());
     if (unexportGpio.bad()){
@@ -42,13 +42,11 @@ GpioController::~GpioController()
 
 bool GpioController::on() noexcept
 {
-    m_value = true;
     return setValue("1");
 }
 
 bool GpioController::off() noexcept
 {
-    m_value = true;
     return setValue("0");
 }
 
@@ -60,7 +58,7 @@ bool GpioController::setValue(const std::string &value) noexcept
         std::cout << "OPERATION FAILED: Unable to set the value of GPIO" << m_pin << std::endl;
         return false;
     }
-    setValGpio << value ;
+    setValGpio << value;
     setValGpio.close();
     return true;
 }
