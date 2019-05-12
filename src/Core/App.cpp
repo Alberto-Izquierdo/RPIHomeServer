@@ -24,14 +24,20 @@ App::~App() noexcept
 {
 }
 
-void App::init() noexcept
+bool App::init() noexcept
 {
+    const char *token = std::getenv("HOME_BOT_TOKEN");
+    if (token == NULL) {
+        std::cout << "Bot token not set, execute \"export "
+                     "HOME_BOT_TOKEN={YOUR_TOKEN}\" before launching the app."
+                  << std::endl;
+      return false;
+    }
     // Build modules
     auto communicationModule(new core::CommunicationModule());
     auto &communicationQueue = communicationModule->getInputQueue();
 
     m_modules.emplace_back(new core::LightModule(m_gpioManager, communicationQueue));
-    const char *token = std::getenv("HOME_BOT_TOKEN");
     m_modules.emplace_back(new core::TelegramBotModule(token, communicationQueue));
 
     // Setup message dispatcher
@@ -39,6 +45,7 @@ void App::init() noexcept
 
     m_modules.emplace_back(std::move(communicationModule));
     std::cout << "App init" << std::endl;
+    return true;
 }
 
 void App::start() noexcept

@@ -18,7 +18,7 @@ class App
 {
 public:
     static App &getInstance();
-    void init() noexcept;
+    bool init() noexcept;
 
     void start() noexcept;
 
