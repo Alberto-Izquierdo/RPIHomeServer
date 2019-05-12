@@ -3,7 +3,8 @@
 int main()
 {
     App &app = App::getInstance();
-    app.init();
-    app.start();
+    if (app.init()) {
+        app.start();
+    }
     return 0;
 }
