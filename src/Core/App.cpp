@@ -31,14 +31,32 @@ bool App::init() noexcept
         std::cout << "Bot token not set, execute \"export "
                      "HOME_BOT_TOKEN={YOUR_TOKEN}\" before launching the app."
                   << std::endl;
-      return false;
+        return false;
+    }
+    std::vector<uint32_t> usersAuthorized;
+    std::ifstream infile("users.txt");
+    if (infile.fail()) {
+        std::cout
+            << "Users file not created, create a file named 'users.txt' with the IDs allowed to use the application"
+            << std::endl;
+        return false;
+    }
+    std::string line;
+    while (std::getline(infile, line)) {
+        std::stringstream iss(line);
+        uint32_t userID;
+        if (!(iss >> userID)) {
+            std::cout << "User ID not correct: " << line << std::endl;
+            return false;
+        }
+        usersAuthorized.push_back(userID);
     }
     // Build modules
     auto communicationModule(new core::CommunicationModule());
     auto &communicationQueue = communicationModule->getInputQueue();
 
     m_modules.emplace_back(new core::LightModule(m_gpioManager, communicationQueue));
-    m_modules.emplace_back(new core::TelegramBotModule(token, communicationQueue));
+    m_modules.emplace_back(new core::TelegramBotModule(token, communicationQueue, usersAuthorized));
 
     // Setup message dispatcher
     communicationModule->setup(m_modules);

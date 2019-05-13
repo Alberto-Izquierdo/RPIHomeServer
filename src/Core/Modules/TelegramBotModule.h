@@ -10,7 +10,8 @@ class TelegramBotModule : public BaseModule
 {
 public:
     TelegramBotModule(const char *token,
-                      std::shared_ptr<MultithreadQueue<std::shared_ptr<Message>>> &outputQueue) noexcept;
+                      std::shared_ptr<MultithreadQueue<std::shared_ptr<Message>>> &outputQueue,
+                      const std::vector<uint32_t> &userAuthorized) noexcept;
     ~TelegramBotModule() noexcept final;
 
     void specificStart() noexcept final;
@@ -23,12 +24,16 @@ public:
     void welcomeMessage(TgBot::Message::Ptr message) noexcept;
 
 private:
+    bool isUserAuthorized(uint32_t userID) const noexcept;
+    void handleSpecificMessage(TgBot::Message::Ptr message,
+                               void (TelegramBotModule::*secondaryFunction)(TgBot::Message::Ptr)) noexcept;
     void sendButtons(int64_t messageId, const std::string &messageToShow);
 
     static const std::string m_moduleName;
     TgBot::Bot m_bot;
     TgBot::TgLongPoll m_longPoll;
     std::vector<std::string> m_userButtons;
+    std::vector<uint32_t> m_usersAuthorized;
 };
 }  // namespace core
 
