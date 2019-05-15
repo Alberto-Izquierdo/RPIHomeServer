@@ -2,7 +2,10 @@
 #define TELEGRAMBOTMODULE_H
 
 #include <Core/BaseModule.h>
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wreorder"
 #include <tgbot/tgbot.h>
+#pragma GCC diagnostic pop
 
 namespace core
 {
