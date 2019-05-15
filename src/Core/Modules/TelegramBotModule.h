@@ -2,39 +2,42 @@
 #define TELEGRAMBOTMODULE_H
 
 #include <Core/BaseModule.h>
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wreorder"
-#include <tgbot/tgbot.h>
-#pragma GCC diagnostic pop
+
+namespace TgBot
+{
+class Bot;
+class TgLongPoll;
+class Message;
+}  // namespace TgBot
 
 namespace core
 {
 class TelegramBotModule : public BaseModule
 {
 public:
-    TelegramBotModule(const char *token,
-                      std::shared_ptr<MultithreadQueue<std::shared_ptr<Message>>> &outputQueue,
-                      const std::vector<uint32_t> &userAuthorized) noexcept;
+    TelegramBotModule(std::shared_ptr<MultithreadQueue<std::shared_ptr<Message>>> &outputQueue) noexcept;
     ~TelegramBotModule() noexcept final;
 
+    bool init() noexcept final;
     void specificStart() noexcept final;
     void update() noexcept final;
     void specificExit() noexcept final;
     const std::string &getModuleName() const noexcept final;
 
-    void turnLightOn(TgBot::Message::Ptr message) noexcept;
-    void turnLightOff(TgBot::Message::Ptr message) noexcept;
-    void welcomeMessage(TgBot::Message::Ptr message) noexcept;
+    void turnLightOn(std::shared_ptr<TgBot::Message> &message) noexcept;
+    void turnLightOff(std::shared_ptr<TgBot::Message> &message) noexcept;
+    void welcomeMessage(std::shared_ptr<TgBot::Message> &message) noexcept;
 
 private:
     bool isUserAuthorized(uint32_t userID) const noexcept;
-    void handleSpecificMessage(TgBot::Message::Ptr message,
-                               void (TelegramBotModule::*secondaryFunction)(TgBot::Message::Ptr)) noexcept;
+    void handleSpecificMessage(
+        std::shared_ptr<TgBot::Message> &message,
+        void (TelegramBotModule::*secondaryFunction)(std::shared_ptr<TgBot::Message> &)) noexcept;
     void sendButtons(int64_t messageId, const std::string &messageToShow);
 
     static const std::string m_moduleName;
-    TgBot::Bot m_bot;
-    TgBot::TgLongPoll m_longPoll;
+    std::unique_ptr<TgBot::Bot> m_bot;
+    std::unique_ptr<TgBot::TgLongPoll> m_longPoll;
     std::vector<std::string> m_userButtons;
     std::vector<uint32_t> m_usersAuthorized;
 };

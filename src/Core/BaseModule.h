@@ -27,6 +27,8 @@ public:
 
     virtual const std::string &getModuleName() const noexcept = 0;
 
+    virtual bool init() noexcept = 0;
+
     virtual void update() noexcept;
 
     void start() noexcept;

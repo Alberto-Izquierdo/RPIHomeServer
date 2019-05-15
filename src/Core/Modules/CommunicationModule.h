@@ -12,6 +12,7 @@ public:
     explicit CommunicationModule() noexcept;
     ~CommunicationModule() noexcept final;
 
+    bool init() noexcept final;
     void specificStart() noexcept final;
     void specificExit() noexcept final;
     void setup(const std::vector<std::unique_ptr<BaseModule>> &modules) noexcept;

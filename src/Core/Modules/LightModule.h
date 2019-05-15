@@ -17,6 +17,8 @@ public:
                 std::shared_ptr<MultithreadQueue<std::shared_ptr<Message>>> &outputQueue) noexcept;
     ~LightModule() noexcept final;
 
+    bool init() noexcept final;
+
     void specificStart() noexcept final;
     void specificExit() noexcept final;
     const std::string &getModuleName() const noexcept final;

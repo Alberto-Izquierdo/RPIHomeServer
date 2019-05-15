@@ -16,6 +16,11 @@ CommunicationModule::~CommunicationModule() noexcept
 {
 }
 
+bool CommunicationModule::init() noexcept
+{
+    return true;
+}
+
 void CommunicationModule::specificStart() noexcept
 {
 }
