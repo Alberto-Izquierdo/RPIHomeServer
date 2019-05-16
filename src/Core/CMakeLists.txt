@@ -12,8 +12,8 @@ add_library(core
     Communication/MessageDispatcher.cpp
     Modules/CommunicationModule.h
     Modules/CommunicationModule.cpp
-    Modules/LightModule.h
-    Modules/LightModule.cpp
+    Modules/GPIOModule.h
+    Modules/GPIOModule.cpp
     Modules/TelegramBotModule.h
     Modules/TelegramBotModule.cpp)
 

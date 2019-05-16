@@ -1,6 +1,6 @@
 #include "App.h"
 #include <Core/Modules/CommunicationModule.h>
-#include <Core/Modules/LightModule.h>
+#include <Core/Modules/GPIOModule.h>
 #include <Core/Modules/TelegramBotModule.h>
 #include <Core/Communication/Message.h>
 #include <Gpio/GpioManager.h>
@@ -30,7 +30,7 @@ bool App::init() noexcept
     auto communicationModule(new core::CommunicationModule());
     auto &communicationQueue = communicationModule->getInputQueue();
 
-    m_modules.emplace_back(new core::LightModule(m_gpioManager, communicationQueue));
+    m_modules.emplace_back(new core::GPIOModule(m_gpioManager, communicationQueue));
     m_modules.emplace_back(new core::TelegramBotModule(communicationQueue));
 
     // Setup message dispatcher
