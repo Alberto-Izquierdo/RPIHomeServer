@@ -1,0 +1,9 @@
+{
+    "GPIO": {
+        "lightPin": 18
+    },
+    "TelegramBot": {
+        "token": "YOUR_BOT_TOKEN",
+        "users": [ YOUR_TELEGRAM_ID ]
+    }
+}

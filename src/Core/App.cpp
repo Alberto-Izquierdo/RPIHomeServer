@@ -7,6 +7,9 @@
 #include <thread>
 #include <iostream>
 #include <signal.h>
+#include <fstream>
+
+using namespace core;
 
 App &App::getInstance()
 {
@@ -16,6 +19,7 @@ App &App::getInstance()
 
 App::App() noexcept
     : m_gpioManager(std::make_shared<GPIO::GpioManager>())
+    , m_moduleNames({GPIOModule::k_moduleName, TelegramBotModule::k_moduleName})
 {
     signal(SIGINT, App::signalHandler);
 }
@@ -27,11 +31,10 @@ App::~App() noexcept
 bool App::init() noexcept
 {
     // Build modules
-    auto communicationModule(new core::CommunicationModule());
+    auto communicationModule(new CommunicationModule());
     auto &communicationQueue = communicationModule->getInputQueue();
 
-    m_modules.emplace_back(new core::GPIOModule(m_gpioManager, communicationQueue));
-    m_modules.emplace_back(new core::TelegramBotModule(communicationQueue));
+    loadModules("config.json", communicationQueue);
 
     // Setup message dispatcher
     communicationModule->setup(m_modules);
@@ -52,7 +55,7 @@ void App::start() noexcept
     threads.reserve(m_modules.size());
     // Start modules
     for (auto &module : m_modules) {
-        threads.emplace_back(&core::BaseModule::start, module.get());
+        threads.emplace_back(&BaseModule::start, module.get());
     }
     std::cout << "Modules started" << std::endl;
     for (auto &thread : threads) {
@@ -64,10 +67,28 @@ void App::start() noexcept
 void App::exit() noexcept
 {
     for (auto &module : m_modules) {
-        if (module->getType() == core::BaseModule::Type::COMMUNICATION) {
-            auto exitMessage = std::make_shared<core::Message>(core::MessageType::EXIT);
+        if (module->getType() == BaseModule::Type::COMMUNICATION) {
+            auto exitMessage = std::make_shared<Message>(MessageType::EXIT);
             module->getInputQueue()->push(exitMessage);
             return;
+        }
+    }
+}
+
+void App::loadModules(const std::string &configFilePath,
+                      std::shared_ptr<MultithreadQueue<std::shared_ptr<Message>>> &communicationQueue) noexcept
+{
+    nlohmann::json configFile;
+    std::ifstream configStream(configFilePath);
+    configStream >> configFile;
+    for (const auto &moduleName : m_moduleNames) {
+        const auto it = configFile.find(moduleName);
+        if (it != configFile.end()) {
+            if (moduleName == GPIOModule::k_moduleName) {
+                m_modules.emplace_back(new GPIOModule(m_gpioManager, communicationQueue, *it));
+            } else if (moduleName == TelegramBotModule::k_moduleName) {
+                m_modules.emplace_back(new TelegramBotModule(communicationQueue, *it));
+            }
         }
     }
 }

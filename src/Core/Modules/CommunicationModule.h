@@ -15,13 +15,14 @@ public:
     bool init() noexcept final;
     void specificStart() noexcept final;
     void specificExit() noexcept final;
+    const std::string &getModuleName() const noexcept final { return k_moduleName; }
     void setup(const std::vector<std::unique_ptr<BaseModule>> &modules) noexcept;
     void handleMessage(const std::shared_ptr<Message> message) noexcept final;
-    const std::string &getModuleName() const noexcept final;
+
+    static const std::string k_moduleName;
 
 private:
     std::unique_ptr<MessageDispatcher> m_messageDispatcher;
-    static const std::string m_moduleName;
 };
 }  // namespace core
 

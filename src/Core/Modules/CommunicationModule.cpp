@@ -4,7 +4,7 @@
 
 using namespace core;
 
-const std::string CommunicationModule::m_moduleName = "Communication";
+const std::string CommunicationModule::k_moduleName = "Communication";
 
 CommunicationModule::CommunicationModule() noexcept
     : BaseModule(BaseModule::Type::COMMUNICATION, nullptr)
@@ -40,9 +40,4 @@ void CommunicationModule::handleMessage(const std::shared_ptr<Message> message) 
         exit(message);
     }
     m_messageDispatcher->handleMessage(message);
-}
-
-const std::string &CommunicationModule::getModuleName() const noexcept
-{
-    return m_moduleName;
 }

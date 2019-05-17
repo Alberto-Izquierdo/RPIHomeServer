@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <memory>
+#include <Core/MultithreadQueue.h>
 
 namespace GPIO
 {
@@ -12,6 +13,7 @@ class GpioManager;
 namespace core
 {
 class BaseModule;
+class Message;
 }  // namespace core
 
 class App
@@ -33,8 +35,12 @@ public:
 private:
     App() noexcept;
     ~App() noexcept;
+    void loadModules(
+        const std::string &configFilePath,
+        std::shared_ptr<core::MultithreadQueue<std::shared_ptr<core::Message>>> &communicationQueue) noexcept;
     std::vector<std::unique_ptr<core::BaseModule>> m_modules;
     std::shared_ptr<GPIO::GpioManager> m_gpioManager;
+    std::vector<std::string> m_moduleNames;
 };
 
 #endif  // APP_H

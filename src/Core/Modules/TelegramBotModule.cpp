@@ -11,14 +11,28 @@
 
 using namespace core;
 
-const std::string TelegramBotModule::m_moduleName = "TelegramBot";
+const std::string TelegramBotModule::k_moduleName = "TelegramBot";
 
-TelegramBotModule::TelegramBotModule(std::shared_ptr<MultithreadQueue<std::shared_ptr<Message>>> &outputQueue) noexcept
+TelegramBotModule::TelegramBotModule(std::shared_ptr<MultithreadQueue<std::shared_ptr<Message>>> &outputQueue,
+                                     const nlohmann::json &config) noexcept
     : BaseModule(BaseModule::Type::TELEGRAM_BOT, outputQueue)
     , m_bot(nullptr)
     , m_longPoll(nullptr)
     , m_userButtons({"/lighton", "/lightoff"})
 {
+    // Load users authorized
+    auto users = config.find("users");
+    if (users != config.end()) {
+        if (users->is_array()) {
+            for (auto it = users->begin(); it != users->end(); ++it) {
+                m_usersAuthorized.emplace_back(it.value());
+            }
+        }
+    }
+    std::string token = config.value("token", "");
+    if (!token.empty()) {
+        m_bot = std::unique_ptr<TgBot::Bot>(new TgBot::Bot(token));
+    }
 }
 
 TelegramBotModule::~TelegramBotModule() noexcept
@@ -28,33 +42,11 @@ TelegramBotModule::~TelegramBotModule() noexcept
 bool TelegramBotModule::init() noexcept
 {
     // Load bot token
-    const char *token = std::getenv("HOME_BOT_TOKEN");
-    if (token == NULL) {
-        std::cout << "Bot token not set, execute \"export "
-                     "HOME_BOT_TOKEN={YOUR_TOKEN}\" before launching the app."
-                  << std::endl;
+    if (m_bot == nullptr) {
+        std::cout << "Bot token not set, add the field \"token\" to the config file." << std::endl;
         return false;
     }
-    m_bot = std::unique_ptr<TgBot::Bot>(new TgBot::Bot(token));
     m_longPoll = std::unique_ptr<TgBot::TgLongPoll>(new TgBot::TgLongPoll(*m_bot, 100, 5));
-    // Load users authorized
-    std::ifstream infile("users.txt");
-    if (infile.fail()) {
-        std::cout
-            << "Users file not created, create a file named 'users.txt' with the IDs allowed to use the application"
-            << std::endl;
-        return false;
-    }
-    std::string line;
-    while (std::getline(infile, line)) {
-        std::stringstream iss(line);
-        uint32_t userID;
-        if (!(iss >> userID)) {
-            std::cout << "User ID not correct: " << line << std::endl;
-            return false;
-        }
-        m_usersAuthorized.push_back(userID);
-    }
     return true;
 }
 
@@ -83,11 +75,6 @@ void TelegramBotModule::update() noexcept
 
 void TelegramBotModule::specificExit() noexcept
 {
-}
-
-const std::string &TelegramBotModule::getModuleName() const noexcept
-{
-    return m_moduleName;
 }
 
 void TelegramBotModule::handleSpecificMessage(
@@ -133,7 +120,7 @@ void TelegramBotModule::sendButtons(int64_t messageId, const std::string &messag
     m_bot->getApi().sendMessage(messageId, messageToShow, false, 0, keyboard);
 }
 
-bool TelegramBotModule::isUserAuthorized(uint32_t userID) const noexcept
+bool TelegramBotModule::isUserAuthorized(int userID) const noexcept
 {
     return std::find(m_usersAuthorized.begin(), m_usersAuthorized.end(), userID) != m_usersAuthorized.end();
 }

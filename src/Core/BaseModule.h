@@ -18,7 +18,7 @@ class Message;
 class BaseModule
 {
 public:
-    enum Type { COMMUNICATION, LIGHT, TELEGRAM_BOT };
+    enum Type { COMMUNICATION, GPIO, TELEGRAM_BOT };
     explicit BaseModule(Type type, std::shared_ptr<MultithreadQueue<std::shared_ptr<Message>>> outputQueue) noexcept;
     virtual ~BaseModule() noexcept;
     explicit BaseModule() = delete;
