@@ -34,7 +34,9 @@ bool App::init() noexcept
     auto communicationModule(new CommunicationModule());
     auto &communicationQueue = communicationModule->getInputQueue();
 
-    loadModules("config.json", communicationQueue);
+    if (!loadModules("config.json", communicationQueue)) {
+        return false;
+    }
 
     // Setup message dispatcher
     communicationModule->setup(m_modules);
@@ -75,21 +77,29 @@ void App::exit() noexcept
     }
 }
 
-void App::loadModules(const std::string &configFilePath,
+bool App::loadModules(const std::string &configFilePath,
                       std::shared_ptr<MultithreadQueue<std::shared_ptr<Message>>> &communicationQueue) noexcept
 {
     nlohmann::json configFile;
-    std::ifstream configStream(configFilePath);
-    configStream >> configFile;
-    for (const auto &moduleName : m_moduleNames) {
-        const auto it = configFile.find(moduleName);
-        if (it != configFile.end()) {
-            if (moduleName == GPIOModule::k_moduleName) {
-                m_modules.emplace_back(new GPIOModule(m_gpioManager, communicationQueue, *it));
-            } else if (moduleName == TelegramBotModule::k_moduleName) {
-                m_modules.emplace_back(new TelegramBotModule(communicationQueue, *it));
+    try {
+        std::ifstream configStream(configFilePath);
+        configStream >> configFile;
+        for (const auto &moduleName : m_moduleNames) {
+            const auto it = configFile.find(moduleName);
+            if (it != configFile.end()) {
+                if (moduleName == GPIOModule::k_moduleName) {
+                    m_modules.emplace_back(new GPIOModule(m_gpioManager, communicationQueue, *it));
+                } else if (moduleName == TelegramBotModule::k_moduleName) {
+                    m_modules.emplace_back(new TelegramBotModule(communicationQueue, *it));
+                }
             }
         }
+        return true;
+    } catch (...) {
+        std::cout << "Config file not found create a \"config.json\" file and fill it with correct "
+                     "values, check sample file in the project folder"
+                  << std::endl;
+        return false;
     }
 }
 

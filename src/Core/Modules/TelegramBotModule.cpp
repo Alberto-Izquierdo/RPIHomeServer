@@ -25,13 +25,22 @@ TelegramBotModule::TelegramBotModule(std::shared_ptr<MultithreadQueue<std::share
     if (users != config.end()) {
         if (users->is_array()) {
             for (auto it = users->begin(); it != users->end(); ++it) {
-                m_usersAuthorized.emplace_back(it.value());
+                if (it->is_number()) {
+                    m_usersAuthorized.emplace_back(it.value());
+                } else {
+                    std::cout << "User " << it.value() << " not well defined (should be a number)" << std::endl;
+                }
             }
         }
     }
     std::string token = config.value("token", "");
     if (!token.empty()) {
-        m_bot = std::unique_ptr<TgBot::Bot>(new TgBot::Bot(token));
+        try {
+            auto botPtr = new TgBot::Bot(token);
+            m_bot = std::unique_ptr<TgBot::Bot>(botPtr);
+        } catch (...) {
+            std::cout << "Token bot not correct" << std::endl;
+        }
     }
 }
 

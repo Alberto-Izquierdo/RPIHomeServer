@@ -35,7 +35,7 @@ public:
 private:
     App() noexcept;
     ~App() noexcept;
-    void loadModules(
+    bool loadModules(
         const std::string &configFilePath,
         std::shared_ptr<core::MultithreadQueue<std::shared_ptr<core::Message>>> &communicationQueue) noexcept;
     std::vector<std::unique_ptr<core::BaseModule>> m_modules;
