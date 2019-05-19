@@ -33,13 +33,14 @@ TelegramBotModule::TelegramBotModule(std::shared_ptr<MultithreadQueue<std::share
             }
         }
     }
-    std::string token = config.value("token", "");
-    if (!token.empty()) {
-        try {
-            auto botPtr = new TgBot::Bot(token);
+    if (m_usersAuthorized.empty()) {
+        std::cout << "No users added to telegram bot" << std::endl;
+    }
+    auto token = config.find("token");
+    if (token != config.end()) {
+        if (token->is_string()) {
+            auto botPtr = new TgBot::Bot(token.value());
             m_bot = std::unique_ptr<TgBot::Bot>(botPtr);
-        } catch (...) {
-            std::cout << "Token bot not correct" << std::endl;
         }
     }
 }
@@ -52,7 +53,9 @@ bool TelegramBotModule::init() noexcept
 {
     // Load bot token
     if (m_bot == nullptr) {
-        std::cout << "Bot token not set, add the field \"token\" to the config file." << std::endl;
+        std::cout << "Bot token not set or it is not correct, add the field \"token\" to the config file and set the "
+                     "token provided by the Botfather."
+                  << std::endl;
         return false;
     }
     m_longPoll = std::unique_ptr<TgBot::TgLongPoll>(new TgBot::TgLongPoll(*m_bot, 100, 5));
