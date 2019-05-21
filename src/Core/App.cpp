@@ -54,15 +54,20 @@ bool App::init() noexcept
 void App::start() noexcept
 {
     std::vector<std::thread> threads;
-    threads.reserve(m_modules.size());
+    threads.reserve(m_modules.size() - 1);
     // Start modules
-    for (auto &module : m_modules) {
-        threads.emplace_back(&BaseModule::start, module.get());
+    for (size_t i = 0; i < m_modules.size() - 1; ++i) {
+        threads.emplace_back(&BaseModule::start, m_modules[i].get());
     }
+    // Last module (communication) is run in the main thread
+    m_modules[m_modules.size() - 1]->start();
+
     std::cout << "Modules started" << std::endl;
+
     for (auto &thread : threads) {
         thread.join();
     }
+
     std::cout << "App closing" << std::endl;
 }
 
