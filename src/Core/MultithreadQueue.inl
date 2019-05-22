@@ -13,23 +13,21 @@ MultithreadQueue<T>::~MultithreadQueue() noexcept
 template <typename T>
 void MultithreadQueue<T>::push(T value) noexcept
 {
-    auto lock = std::unique_lock<std::mutex>(m_dataMutex);
+    std::lock_guard<std::mutex> lock(m_dataMutex);
     m_data.push(value);
     m_conditionVariable.notify_one();
 }
 
 template <typename T>
-T MultithreadQueue<T>::front() noexcept
+bool MultithreadQueue<T>::front(T &result) noexcept
 {
-    auto lock = std::unique_lock<std::mutex>(m_dataMutex);
-    return m_data.front();
-}
-
-template <typename T>
-void MultithreadQueue<T>::pop() noexcept
-{
-    auto lock = std::unique_lock<std::mutex>(m_dataMutex);
-    m_data.pop();
+    std::lock_guard<std::mutex> lock(m_dataMutex);
+    if (!isEmpty()) {
+        result = m_data.front();
+        m_data.pop();
+        return true;
+    }
+    return false;
 }
 
 template <typename T>

@@ -21,8 +21,10 @@ void BaseModule::update() noexcept
 {
     m_inputQueue->waitForPushIfEmpty();
     while (!m_inputQueue->isEmpty()) {
-        handleMessage(m_inputQueue->front());
-        m_inputQueue->pop();
+        std::shared_ptr<Message> message;
+        if (m_inputQueue->front(message)) {
+            handleMessage(message);
+        }
     }
 }
 

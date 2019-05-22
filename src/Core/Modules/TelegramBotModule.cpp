@@ -80,8 +80,10 @@ void TelegramBotModule::update() noexcept
     m_longPoll->start();
     getInputQueue()->waitForPushIfEmpty(2);
     while (!getInputQueue()->isEmpty()) {
-        handleMessage(getInputQueue()->front());
-        getInputQueue()->pop();
+        std::shared_ptr<Message> message;
+        if (getInputQueue()->front(message)) {
+            handleMessage(message);
+        }
     }
 }
 

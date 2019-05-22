@@ -62,8 +62,6 @@ void App::start() noexcept
     // Last module (communication) is run in the main thread
     m_modules[m_modules.size() - 1]->start();
 
-    std::cout << "Modules started" << std::endl;
-
     for (auto &thread : threads) {
         thread.join();
     }
@@ -73,12 +71,9 @@ void App::start() noexcept
 
 void App::exit() noexcept
 {
+    auto exitMessage = std::make_shared<Message>(MessageType::EXIT);
     for (auto &module : m_modules) {
-        if (module->getType() == BaseModule::Type::COMMUNICATION) {
-            auto exitMessage = std::make_shared<Message>(MessageType::EXIT);
-            module->getInputQueue()->push(exitMessage);
-            return;
-        }
+        module->getInputQueue()->push(exitMessage);
     }
 }
 
@@ -110,5 +105,6 @@ bool App::loadModules(const std::string &configFilePath,
 
 void App::signalHandler(int /*signal*/)
 {
+    std::cout << "Signal captured, exiting application" << std::endl;
     App::getInstance().exit();
 }

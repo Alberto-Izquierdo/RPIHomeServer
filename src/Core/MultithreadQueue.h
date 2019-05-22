@@ -15,8 +15,7 @@ public:
     ~MultithreadQueue() noexcept;
 
     void push(T value) noexcept;
-    T front() noexcept;
-    void pop() noexcept;
+    bool front(T &result) noexcept;
     bool isEmpty() const noexcept;
     void waitForPushIfEmpty(int maxSecondsWait = 0) noexcept;
 
