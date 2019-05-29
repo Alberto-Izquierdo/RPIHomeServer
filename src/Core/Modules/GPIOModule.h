@@ -25,8 +25,14 @@ public:
     void specificExit() noexcept final;
     const std::string &getModuleName() const noexcept final { return k_moduleName; }
 
+    void handlePinChanged(const std::shared_ptr<Message> message) noexcept;
+    void getAvailableMessages(const std::shared_ptr<Message> message) noexcept;
+    void turnPinOn(std::string pinAlias) noexcept;
+    void turnPinOff(std::string pinAlias) noexcept;
+    /*
     void turnLightOn(const std::shared_ptr<Message> message);
     void turnLightOff(const std::shared_ptr<Message> message);
+    */
 
     GPIOModule() = delete;
 
@@ -34,7 +40,7 @@ public:
 
 private:
     std::shared_ptr<GPIO::GpioManager> m_gpioManager;
-    int m_pinAssignedToLight;
+    std::unordered_map<std::string, int> m_pinsAssigned;
 };
 }  // namespace core
 

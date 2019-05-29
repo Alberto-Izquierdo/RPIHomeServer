@@ -1,5 +1,9 @@
 #include "TelegramBotModule.h"
 #include <Core/Communication/Message.h>
+#include <Core/Communication/Messages/ReturnAvailablePinsMessage.h>
+#include <Core/Communication/Messages/GetAvailablePinsMessage.h>
+#include <Core/Communication/Messages/PinOnMessage.h>
+#include <Core/Communication/Messages/PinOffMessage.h>
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wreorder"
@@ -8,6 +12,7 @@
 
 #include <thread>
 #include <chrono>
+#include <algorithm>
 
 using namespace core;
 
@@ -18,7 +23,6 @@ TelegramBotModule::TelegramBotModule(std::shared_ptr<MultithreadQueue<std::share
     : BaseModule(BaseModule::Type::TELEGRAM_BOT, outputQueue)
     , m_bot(nullptr)
     , m_longPoll(nullptr)
-    , m_userButtons({"/lighton", "/lightoff"})
 {
     // Load users authorized
     auto users = config.find("users");
@@ -43,6 +47,9 @@ TelegramBotModule::TelegramBotModule(std::shared_ptr<MultithreadQueue<std::share
             m_bot = std::unique_ptr<TgBot::Bot>(botPtr);
         }
     }
+    addMessageHandler(
+        core::MessageType::RETURN_AVAILABLE_PIN_ALIASES,
+        reinterpret_cast<BaseModule::messageHanlderFunction>(&TelegramBotModule::returnAvailableMessages));
 }
 
 TelegramBotModule::~TelegramBotModule() noexcept
@@ -66,12 +73,6 @@ void TelegramBotModule::specificStart() noexcept
 {
     m_bot->getEvents().onCommand("start", [this](TgBot::Message::Ptr message) {
         this->handleSpecificMessage(message, &TelegramBotModule::welcomeMessage);
-    });
-    m_bot->getEvents().onCommand("lighton", [this](TgBot::Message::Ptr message) {
-        this->handleSpecificMessage(message, &TelegramBotModule::turnLightOn);
-    });
-    m_bot->getEvents().onCommand("lightoff", [this](TgBot::Message::Ptr message) {
-        this->handleSpecificMessage(message, &TelegramBotModule::turnLightOff);
     });
 }
 
@@ -103,21 +104,45 @@ void TelegramBotModule::handleSpecificMessage(
     }
 }
 
-void TelegramBotModule::turnLightOn(std::shared_ptr<TgBot::Message> &message) noexcept
+void TelegramBotModule::returnAvailableMessages(const std::shared_ptr<Message> message) noexcept
 {
-    getOutputQueue()->push(std::make_shared<Message>(MessageType::LIGHT_ON));
-    sendButtons(message->chat->id, "Light turned on");
+    auto castedMessage = std::static_pointer_cast<ReturnAvailablePinsMessage>(message);
+    const auto &pinsAvailable = castedMessage->getPinsAvailable();
+    m_userButtons.clear();
+    std::for_each(pinsAvailable.begin(), pinsAvailable.end(), [&](const std::string &pin) -> void {
+        std::string onName = pin + "On";
+        std::string offName = pin + "Off";
+        m_bot->getEvents().onCommand(onName, [this, pin](TgBot::Message::Ptr message) {
+            this->handleSpecificMessage(message, &TelegramBotModule::turnPinOn);
+        });
+        m_bot->getEvents().onCommand(offName, [this, pin](TgBot::Message::Ptr message) {
+            this->handleSpecificMessage(message, &TelegramBotModule::turnPinOff);
+        });
+        m_userButtons.emplace_back("/" + onName);
+        m_userButtons.emplace_back("/" + offName);
+    });
+    sendButtons(castedMessage->getChatId(), "Welcome, please select an option");
 }
 
-void TelegramBotModule::turnLightOff(std::shared_ptr<TgBot::Message> &message) noexcept
+void TelegramBotModule::turnPinOn(std::shared_ptr<TgBot::Message> &message) noexcept
 {
-    getOutputQueue()->push(std::make_shared<Message>(MessageType::LIGHT_OFF));
-    sendButtons(message->chat->id, "Light turned off");
+    const auto &fullMessage = message->text;
+    auto pin = fullMessage.substr(1, fullMessage.size() - 3);
+    getOutputQueue()->push(std::make_shared<PinOnMessage>(pin));
+    sendButtons(message->chat->id, "Pin " + pin + " turned on");
+}
+
+void TelegramBotModule::turnPinOff(std::shared_ptr<TgBot::Message> &message) noexcept
+{
+    const auto &fullMessage = message->text;
+    auto pin = fullMessage.substr(1, fullMessage.size() - 4);
+    getOutputQueue()->push(std::make_shared<PinOffMessage>(pin));
+    sendButtons(message->chat->id, "Pin " + pin + " turned off");
 }
 
 void TelegramBotModule::welcomeMessage(std::shared_ptr<TgBot::Message> &message) noexcept
 {
-    sendButtons(message->chat->id, "Welcome, please select an option");
+    getOutputQueue()->push(std::make_shared<GetAvailablePinsMessage>(message->chat->id));
 }
 
 void TelegramBotModule::sendButtons(int64_t messageId, const std::string &messageToShow)

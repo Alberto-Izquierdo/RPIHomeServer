@@ -1,6 +1,6 @@
 {
     "GPIO": {
-        "lightPin": 18
+        "pins": [["pinAlias", PIN]]
     },
     "TelegramBot": {
         "token": "YOUR_BOT_TOKEN",

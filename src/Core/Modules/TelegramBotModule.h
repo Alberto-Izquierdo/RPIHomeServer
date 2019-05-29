@@ -26,8 +26,9 @@ public:
     void specificExit() noexcept final;
     const std::string &getModuleName() const noexcept final { return k_moduleName; }
 
-    void turnLightOn(std::shared_ptr<TgBot::Message> &message) noexcept;
-    void turnLightOff(std::shared_ptr<TgBot::Message> &message) noexcept;
+    void returnAvailableMessages(const std::shared_ptr<Message> message) noexcept;
+    void turnPinOn(std::shared_ptr<TgBot::Message> &message) noexcept;
+    void turnPinOff(std::shared_ptr<TgBot::Message> &message) noexcept;
     void welcomeMessage(std::shared_ptr<TgBot::Message> &message) noexcept;
 
     static const std::string k_moduleName;

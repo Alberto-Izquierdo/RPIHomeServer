@@ -1,10 +1,12 @@
 #include "MessageUtils.h"
 
-using namespace core::utils;
+using namespace core::MessageUtils;
 
 const std::unordered_map<MessageType, std::string> typeToString = {{MessageType::EXIT, "exit"},
                                                                    {MessageType::LIGHT_ON, "lightOn"},
-                                                                   {MessageType::LIGHT_OFF, "lightOff"}};
+                                                                   {MessageType::LIGHT_OFF, "lightOff"},
+                                                                   {MessageType::PIN_ON, "pinOn"},
+                                                                   {MessageType::PIN_OFF, "pinOff"}};
 
 std::string getMessageTypeName(MessageType type) noexcept
 {
