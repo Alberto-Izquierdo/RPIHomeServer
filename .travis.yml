@@ -9,20 +9,43 @@ addons:
       - python3-pip
       - python3-venv
 
-install:
+jobs:
+  include:
+    - stage: RPI
+      install:
 # Install conan
-  - python3 -m pip install --user virtualenv
-  - python3 -m venv conan
-  - source conan/bin/activate
-  - pip install conan
+        - python3 -m pip install --user virtualenv
+        - python3 -m venv conan
+        - source conan/bin/activate
+        - pip install conan
 # Automatic detection of your arch, compiler, etc.
-  - conan user
+        - conan user
 # Add conan remote repositories, clone rpi compiler
-  - ./setup-environment.sh
+        - ./setup-environment.sh
+        - git clone https://github.com/raspberrypi/tools.git
 # Install conan dependencies, cmake and make
-  - mkdir build && cd build
-  - conan install .. --build=missing --profile ../rpi_profile
-  - cmake .. -DCMAKE_TOOLCHAIN_FILE=../Toolchain-RaspberryPi.cmake 
+        - mkdir build && cd build
+        - conan install .. --build=missing --profile ../rpi_profile
+        - cmake .. -DCMAKE_TOOLCHAIN_FILE=../Toolchain-RaspberryPi.cmake 
 
-script:
-  - make -j$(nproc)
+      script:
+        - make -j$(nproc)
+    - stage: linux
+      install:
+# Install conan
+        - python3 -m pip install --user virtualenv
+        - python3 -m venv conan
+        - source conan/bin/activate
+        - pip install conan
+# Automatic detection of your arch, compiler, etc.
+        - conan user
+# Add conan remote repositories, clone rpi compiler
+        - ./setup-environment.sh
+# Install conan dependencies, cmake and make
+        - mkdir build && cd build
+        - conan install .. --build=missing
+        - cmake ..
+
+      script:
+        - make -j$(nproc)
+        - make test

@@ -1,4 +1,5 @@
 add_library(core
+    SHARED
     App.h
     App.cpp
     BaseModule.h
@@ -10,6 +11,8 @@ add_library(core
     Communication/Message.cpp
     Communication/MessageDispatcher.h
     Communication/MessageDispatcher.cpp
+    Communication/MessageUtils.h
+    Communication/MessageUtils.cpp
     Communication/Messages/PinOnMessage.h
     Communication/Messages/PinOnMessage.cpp
     Communication/Messages/PinOffMessage.h
@@ -25,5 +28,5 @@ add_library(core
     Modules/TelegramBotModule.h
     Modules/TelegramBotModule.cpp)
 
-target_link_libraries(core PRIVATE ${CONAN_LIBS})
-target_link_libraries(core PUBLIC gpio)
+target_link_libraries(core PUBLIC ${CONAN_LIBS})
+target_link_libraries(core PRIVATE gpio)

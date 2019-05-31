@@ -1,14 +1,13 @@
 #include "MessageUtils.h"
 
-using namespace core::MessageUtils;
+using namespace core;
 
-const std::unordered_map<MessageType, std::string> typeToString = {{MessageType::EXIT, "exit"},
-                                                                   {MessageType::LIGHT_ON, "lightOn"},
-                                                                   {MessageType::LIGHT_OFF, "lightOff"},
-                                                                   {MessageType::PIN_ON, "pinOn"},
-                                                                   {MessageType::PIN_OFF, "pinOff"}};
+static const std::unordered_map<MessageType, std::string, std::hash<int>> typeToString = {
+    {MessageType::EXIT, "exit"},
+    {MessageType::PIN_ON, "pinOn"},
+    {MessageType::PIN_OFF, "pinOff"}};
 
-std::string getMessageTypeName(MessageType type) noexcept
+std::string MessageUtils::getMessageTypeName(MessageType type) noexcept
 {
     auto it = typeToString.find(type);
     if (it != typeToString.end()) {
@@ -17,7 +16,7 @@ std::string getMessageTypeName(MessageType type) noexcept
     return "None";
 }
 
-MessageType getMessageType(const std::string &typeName) noexcept
+MessageType MessageUtils::getMessageType(const std::string &typeName) noexcept
 {
     static std::unordered_map<std::string, MessageType> stringToType;
     if (stringToType.empty()) {

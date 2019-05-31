@@ -9,7 +9,6 @@ namespace core
 {
 namespace MessageUtils
 {
-static const std::unordered_map<MessageType, std::string, std::hash<int>> typeToString;
 std::string getMessageTypeName(MessageType type) noexcept;
 MessageType getMessageType(const std::string &typeName) noexcept;
 }  // namespace MessageUtils
