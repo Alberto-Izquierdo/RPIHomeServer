@@ -1,0 +1,14 @@
+[requires]
+tgbot_cpp/1.1@jgsogo/stable
+jsonformoderncpp/3.6.1@vthiery/stable
+Catch2/2.7.1@catchorg/stable
+
+[generators]
+cmake
+
+[options]
+
+[imports]
+bin, *.dll -> bin
+lib, *.dylib* -> bin
+lib, *.so* -> bin

@@ -1,5 +1,4 @@
 add_library(core
-    SHARED
     App.h
     App.cpp
     BaseModule.h
@@ -28,5 +27,4 @@ add_library(core
     Modules/TelegramBotModule.h
     Modules/TelegramBotModule.cpp)
 
-target_link_libraries(core PUBLIC ${CONAN_LIBS})
-target_link_libraries(core PRIVATE gpio)
+target_link_libraries(core PRIVATE gpio CONAN_PKG::jsonformoderncpp CONAN_PKG::tgbot_cpp)
