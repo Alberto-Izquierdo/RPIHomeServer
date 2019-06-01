@@ -1,9 +1,33 @@
 {
     "GPIO": {
-        "pins": [["pinAlias", PIN]]
+        "pins": [[pinAlias, PIN]]
     },
     "TelegramBot": {
         "token": "YOUR_BOT_TOKEN",
         "users": [ YOUR_TELEGRAM_ID ]
+    },
+    "MessageGenerator": {
+        "messages": [
+            {
+                "message":
+                {
+                    "pinOn":
+                    {
+                        "alias": pinAlias
+                    }
+                },
+                "time": time in HH:MM:SS format
+            },
+            {
+                "message":
+                {
+                    "pinOff":
+                    {
+                        "alias": pinAlias
+                    }
+                },
+                "time": time in HH:MM:SS format
+            }
+        ]
     }
 }

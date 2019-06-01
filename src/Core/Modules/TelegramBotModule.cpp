@@ -79,7 +79,7 @@ void TelegramBotModule::specificStart() noexcept
 void TelegramBotModule::update() noexcept
 {
     m_longPoll->start();
-    getInputQueue()->waitForPushIfEmpty(2);
+    getInputQueue()->waitForPushIfEmpty(std::chrono::system_clock::now() + std::chrono::seconds(2));
     while (!getInputQueue()->isEmpty()) {
         std::shared_ptr<Message> message;
         if (getInputQueue()->front(message)) {

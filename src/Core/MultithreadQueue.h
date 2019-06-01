@@ -4,6 +4,7 @@
 #include <queue>
 #include <mutex>
 #include <condition_variable>
+#include <chrono>
 
 namespace core
 {
@@ -17,7 +18,7 @@ public:
     void push(T value) noexcept;
     bool front(T &result) noexcept;
     bool isEmpty() const noexcept;
-    void waitForPushIfEmpty(int maxSecondsWait = 0) noexcept;
+    void waitForPushIfEmpty(std::chrono::time_point<std::chrono::system_clock> timeUntilWakeUp = {}) noexcept;
 
 private:
     std::queue<T> m_data;

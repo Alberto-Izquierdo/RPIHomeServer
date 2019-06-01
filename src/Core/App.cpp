@@ -2,6 +2,7 @@
 #include <Core/Modules/CommunicationModule.h>
 #include <Core/Modules/GPIOModule.h>
 #include <Core/Modules/TelegramBotModule.h>
+#include <Core/Modules/MessageGeneratorModule.h>
 #include <Core/Communication/Message.h>
 #include <Gpio/GpioManager.h>
 #include <thread>
@@ -19,7 +20,7 @@ App &App::getInstance()
 
 App::App() noexcept
     : m_gpioManager(std::make_shared<GPIO::GpioManager>())
-    , m_moduleNames({GPIOModule::k_moduleName, TelegramBotModule::k_moduleName})
+    , m_moduleNames({GPIOModule::k_moduleName, TelegramBotModule::k_moduleName, MessageGeneratorModule::k_moduleName})
 {
     signal(SIGINT, App::signalHandler);
 }
@@ -91,6 +92,8 @@ bool App::loadModules(const std::string &configFilePath,
                     m_modules.emplace_back(new GPIOModule(m_gpioManager, communicationQueue, *it));
                 } else if (moduleName == TelegramBotModule::k_moduleName) {
                     m_modules.emplace_back(new TelegramBotModule(communicationQueue, *it));
+                } else if (moduleName == MessageGeneratorModule::k_moduleName) {
+                    m_modules.emplace_back(new MessageGeneratorModule(communicationQueue, *it));
                 }
             }
         }

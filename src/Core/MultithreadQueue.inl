@@ -37,12 +37,13 @@ bool MultithreadQueue<T>::isEmpty() const noexcept
 }
 
 template <typename T>
-void MultithreadQueue<T>::waitForPushIfEmpty(int maxSecondsWait) noexcept
+void MultithreadQueue<T>::waitForPushIfEmpty(
+    std::chrono::time_point<std::chrono::system_clock> timeUntilWakeUp) noexcept
 {
     if (isEmpty()) {
         auto lock = std::unique_lock<std::mutex>(m_waitMutex);
-        if (maxSecondsWait > 0) {
-            m_conditionVariable.wait_for(lock, std::chrono::seconds(maxSecondsWait));
+        if (timeUntilWakeUp > std::chrono::system_clock::now()) {
+            m_conditionVariable.wait_until(lock, timeUntilWakeUp);
         } else {
             m_conditionVariable.wait(lock);
         }

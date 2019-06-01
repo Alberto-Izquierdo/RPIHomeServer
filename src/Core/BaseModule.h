@@ -18,7 +18,7 @@ class Message;
 class BaseModule
 {
 public:
-    enum Type { COMMUNICATION, GPIO, TELEGRAM_BOT };
+    enum Type { COMMUNICATION, GPIO, TELEGRAM_BOT, MESSAGE_GENERATOR };
     explicit BaseModule(Type type, std::shared_ptr<MultithreadQueue<std::shared_ptr<Message>>> outputQueue) noexcept;
     virtual ~BaseModule() noexcept;
     explicit BaseModule() = delete;
@@ -55,6 +55,8 @@ protected:
     void addMessageHandler(MessageType messageType, messageHanlderFunction function);
 
     std::shared_ptr<MultithreadQueue<std::shared_ptr<Message>>> getOutputQueue() const noexcept;
+
+    bool needsToExit() const noexcept { return m_exit.load(); }
 
 private:
     Type m_type;

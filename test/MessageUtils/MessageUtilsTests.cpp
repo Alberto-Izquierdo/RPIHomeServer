@@ -35,3 +35,11 @@ TEST_CASE("MessageFactory", "CreateMessageByJson")
     auto typo2Message = core::MessageFactory::makeMessage(typo2);
     REQUIRE(typo2Message == nullptr);
 }
+
+TEST_CASE("TimeUtils", "CreateTimeFromString")
+{
+    auto now = std::chrono::system_clock::now();
+    REQUIRE(core::MessageUtils::getTimeFromString("asdf") < now);
+    REQUIRE(core::MessageUtils::getTimeFromString("28:40:00") < now);
+    REQUIRE(core::MessageUtils::getTimeFromString("21:40:00") > now);
+}

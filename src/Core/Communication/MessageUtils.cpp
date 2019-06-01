@@ -30,3 +30,17 @@ MessageType MessageUtils::getMessageType(const std::string &typeName) noexcept
     }
     return MessageType::NONE;
 }
+
+std::chrono::time_point<std::chrono::system_clock> MessageUtils::getTimeFromString(const std::string &time) noexcept
+{
+    auto now = std::chrono::system_clock::now();
+    try {
+        time_t tmp = std::chrono::system_clock::to_time_t(now);
+        tm actualTime = *localtime(&tmp);
+        tm timeToWakeUpTm = actualTime;
+        strptime(time.c_str(), "%H:%M:%S", &timeToWakeUpTm);
+        return std::chrono::system_clock::from_time_t(mktime(&timeToWakeUpTm));
+    } catch (...) {
+        return now - std::chrono::hours(1);
+    }
+}

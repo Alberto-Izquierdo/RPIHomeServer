@@ -27,6 +27,8 @@ add_library(core
     Modules/GPIOModule.h
     Modules/GPIOModule.cpp
     Modules/TelegramBotModule.h
-    Modules/TelegramBotModule.cpp)
+    Modules/TelegramBotModule.cpp
+    Modules/MessageGeneratorModule.h
+    Modules/MessageGeneratorModule.cpp)
 
 target_link_libraries(core PRIVATE gpio CONAN_PKG::jsonformoderncpp CONAN_PKG::tgbot_cpp)
