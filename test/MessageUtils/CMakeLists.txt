@@ -1,4 +1,4 @@
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 add_executable(message_utils_tests MessageUtilsTests.cpp)
-target_link_libraries(message_utils_tests core CONAN_PKG::Catch2)
+target_link_libraries(message_utils_tests core CONAN_PKG::Catch2 CONAN_PKG::jsonformoderncpp)
 ParseAndAddCatchTests(message_utils_tests)

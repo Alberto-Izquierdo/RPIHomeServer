@@ -20,6 +20,8 @@ add_library(core
     Communication/Messages/GetAvailablePinsMessage.cpp
     Communication/Messages/ReturnAvailablePinsMessage.h
     Communication/Messages/ReturnAvailablePinsMessage.cpp
+    Communication/Messages/MessageFactory.h
+    Communication/Messages/MessageFactory.cpp
     Modules/CommunicationModule.h
     Modules/CommunicationModule.cpp
     Modules/GPIOModule.h
