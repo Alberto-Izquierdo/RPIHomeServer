@@ -27,6 +27,17 @@
                     }
                 },
                 "time": time in HH:MM:SS format
+            },
+            {
+                "message":
+                {
+                    "pinOnAndOff":
+                    {
+                        "alias": pinAlias,
+                        "duration": duration in HH:MM:SS format
+                    }
+                },
+                "time": time in HH:MM:SS format
             }
         ]
     }

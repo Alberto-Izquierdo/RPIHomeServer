@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <Core/Communication/Messages/PinOnMessage.h>
 #include <Core/Communication/Messages/PinOffMessage.h>
+#include <Core/Communication/Messages/PinOnAndOffMessage.h>
 #include <Core/Communication/Messages/ReturnAvailablePinsMessage.h>
 #include <Core/Communication/Messages/GetAvailablePinsMessage.h>
 
@@ -21,6 +22,8 @@ GPIOModule::GPIOModule(std::shared_ptr<GPIO::GpioManager> &gpioManager,
                       reinterpret_cast<BaseModule::messageHanlderFunction>(&GPIOModule::handlePinChanged));
     addMessageHandler(core::MessageType::PIN_OFF,
                       reinterpret_cast<BaseModule::messageHanlderFunction>(&GPIOModule::handlePinChanged));
+    addMessageHandler(core::MessageType::PIN_ON_AND_OFF,
+                      reinterpret_cast<BaseModule::messageHanlderFunction>(&GPIOModule::handlePinOnAndOff));
     addMessageHandler(core::MessageType::GET_AVAILABLE_PIN_ALIASES,
                       reinterpret_cast<BaseModule::messageHanlderFunction>(&GPIOModule::getAvailableMessages));
     auto pins = config.find("pins");
@@ -63,15 +66,64 @@ void GPIOModule::specificExit() noexcept
 {
 }
 
+void GPIOModule::update() noexcept
+{
+    if (m_pinsToTurnOff.empty()) {
+        getInputQueue()->waitForPushIfEmpty();
+    } else {
+        auto pinToTurnOff = m_pinsToTurnOff.begin();
+        getInputQueue()->waitForPushIfEmpty(m_pinsToTurnOff.begin()->timeToSwitchOff);
+    }
+    while (!getInputQueue()->isEmpty()) {
+        std::shared_ptr<Message> message;
+        if (getInputQueue()->front(message)) {
+            handleMessage(message);
+        }
+    }
+    if (!m_pinsToTurnOff.empty()) {
+        auto now = std::chrono::system_clock::now();
+        if (now >= m_pinsToTurnOff.begin()->timeToSwitchOff) {
+            auto alias = m_pinsToTurnOff.begin()->alias;
+            m_pinsToTurnOff.erase(m_pinsToTurnOff.begin());
+            turnPinOff(alias);
+        }
+    }
+}
+
+void GPIOModule::removePinToSwitchOffIfExists(const std::string &alias) noexcept
+{
+    for (auto it = m_pinsToTurnOff.begin(); it != m_pinsToTurnOff.end(); ++it) {
+        if (it->alias == alias) {
+            m_pinsToTurnOff.erase(it);
+            return;
+        }
+    }
+}
+
 void GPIOModule::handlePinChanged(const std::shared_ptr<Message> message) noexcept
 {
     if (message->getType() == MessageType::PIN_ON) {
         auto castedMessage = std::static_pointer_cast<PinOnMessage>(message);
-        turnPinOn(castedMessage->getPinAlias());
+        const auto &alias = castedMessage->getPinAlias();
+        turnPinOn(alias);
+        removePinToSwitchOffIfExists(alias);
     } else if (message->getType() == MessageType::PIN_OFF) {
         auto castedMessage = std::static_pointer_cast<PinOffMessage>(message);
-        turnPinOff(castedMessage->getPinAlias());
+        const auto &alias = castedMessage->getPinAlias();
+        turnPinOff(alias);
+        removePinToSwitchOffIfExists(alias);
     }
+}
+
+void GPIOModule::handlePinOnAndOff(const std::shared_ptr<Message> message) noexcept
+{
+    auto castedMessage = std::static_pointer_cast<PinOnAndOffMessage>(message);
+    const auto &alias = castedMessage->getPinAlias();
+    turnPinOn(alias);
+    removePinToSwitchOffIfExists(alias);
+    auto duration = castedMessage->getTimeToSwitchOff();
+    auto timeToSwitchOff = std::chrono::system_clock::now() + duration;
+    m_pinsToTurnOff.emplace(alias, timeToSwitchOff);
 }
 
 void GPIOModule::getAvailableMessages(const std::shared_ptr<Message> message) noexcept
