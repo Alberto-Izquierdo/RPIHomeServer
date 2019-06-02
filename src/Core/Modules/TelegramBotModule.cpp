@@ -4,6 +4,8 @@
 #include <Core/Communication/Messages/GetAvailablePinsMessage.h>
 #include <Core/Communication/Messages/PinOnMessage.h>
 #include <Core/Communication/Messages/PinOffMessage.h>
+#include <Core/Communication/Messages/PinOnAndOffMessage.h>
+#include <Core/Communication/MessageUtils.h>
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wreorder"
@@ -112,14 +114,19 @@ void TelegramBotModule::returnAvailableMessages(const std::shared_ptr<Message> m
     std::for_each(pinsAvailable.begin(), pinsAvailable.end(), [&](const std::string &pin) -> void {
         std::string onName = pin + "On";
         std::string offName = pin + "Off";
+        std::string onOffName = pin + "OnAndOff";
         m_bot->getEvents().onCommand(onName, [this, pin](TgBot::Message::Ptr message) {
             this->handleSpecificMessage(message, &TelegramBotModule::turnPinOn);
         });
         m_bot->getEvents().onCommand(offName, [this, pin](TgBot::Message::Ptr message) {
             this->handleSpecificMessage(message, &TelegramBotModule::turnPinOff);
         });
+        m_bot->getEvents().onCommand(onOffName, [this, pin](TgBot::Message::Ptr message) {
+            this->handleSpecificMessage(message, &TelegramBotModule::turnPinOnAndOff);
+        });
         m_userButtons.emplace_back("/" + onName);
         m_userButtons.emplace_back("/" + offName);
+        m_userButtons.emplace_back("/" + onOffName + " 00:00:05");
     });
     sendButtons(castedMessage->getChatId(), "Welcome, please select an option");
 }
@@ -138,6 +145,27 @@ void TelegramBotModule::turnPinOff(std::shared_ptr<TgBot::Message> &message) noe
     auto pin = fullMessage.substr(1, fullMessage.size() - 4);
     getOutputQueue()->push(std::make_shared<PinOffMessage>(pin));
     sendButtons(message->chat->id, "Pin " + pin + " turned off");
+}
+
+void TelegramBotModule::turnPinOnAndOff(std::shared_ptr<TgBot::Message> &message) noexcept
+{
+    const auto &fullMessage = message->text;
+    auto sufixPosition = fullMessage.find("OnAndOff");
+    auto pin = fullMessage.substr(1, sufixPosition - 1);
+    auto timePosition = fullMessage.find(" ");
+    if (timePosition == std::string::npos) {
+        sendButtons(message->chat->id, "Message not well set");
+        return;
+    }
+    auto duration = MessageUtils::getDurationFromString(fullMessage.substr(timePosition + 1, std::string::npos));
+    if (duration == std::chrono::seconds(0)) {
+        sendButtons(message->chat->id, "Time not well set, format is \"HH:MM:SS\"");
+        return;
+    }
+    getOutputQueue()->push(std::make_shared<PinOnAndOffMessage>(pin, duration));
+    sendButtons(
+        message->chat->id,
+        "Pin " + pin + " turned on and will be turned off in " + fullMessage.substr(timePosition, std::string::npos));
 }
 
 void TelegramBotModule::welcomeMessage(std::shared_ptr<TgBot::Message> &message) noexcept

@@ -63,4 +63,5 @@ TEST_CASE("TimeUtils", "CreateTimeFromString")
     REQUIRE(core::MessageUtils::getTimeFromString("28:40:00") < now);
     REQUIRE(core::MessageUtils::getTimeFromString("21:40:00") > now);
     REQUIRE(core::MessageUtils::getDurationFromString("00:00:01") == std::chrono::seconds(1));
+    REQUIRE(core::MessageUtils::getDurationFromString("asdf") == std::chrono::seconds(0));
 }

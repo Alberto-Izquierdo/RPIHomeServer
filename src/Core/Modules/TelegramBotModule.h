@@ -29,6 +29,7 @@ public:
     void returnAvailableMessages(const std::shared_ptr<Message> message) noexcept;
     void turnPinOn(std::shared_ptr<TgBot::Message> &message) noexcept;
     void turnPinOff(std::shared_ptr<TgBot::Message> &message) noexcept;
+    void turnPinOnAndOff(std::shared_ptr<TgBot::Message> &message) noexcept;
     void welcomeMessage(std::shared_ptr<TgBot::Message> &message) noexcept;
 
     static const std::string k_moduleName;

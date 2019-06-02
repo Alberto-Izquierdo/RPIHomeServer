@@ -49,7 +49,7 @@ std::chrono::time_point<std::chrono::system_clock> MessageUtils::getTimeFromStri
 std::chrono::duration<int> MessageUtils::getDurationFromString(const std::string &time) noexcept
 {
     try {
-        tm duration_t;
+        tm duration_t{0};
         strptime(time.c_str(), "%H:%M:%S", &duration_t);
         std::chrono::duration<int> duration = std::chrono::seconds(duration_t.tm_sec);
         duration += std::chrono::minutes(duration_t.tm_min);
