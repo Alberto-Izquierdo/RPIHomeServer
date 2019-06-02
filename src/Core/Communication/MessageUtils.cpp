@@ -5,7 +5,8 @@ using namespace core;
 static const std::unordered_map<MessageType, std::string, std::hash<int>> typeToString = {
     {MessageType::EXIT, "exit"},
     {MessageType::PIN_ON, "pinOn"},
-    {MessageType::PIN_OFF, "pinOff"}};
+    {MessageType::PIN_OFF, "pinOff"},
+    {MessageType::PIN_ON_AND_OFF, "pinOnAndOff"}};
 
 std::string MessageUtils::getMessageTypeName(MessageType type) noexcept
 {
@@ -42,5 +43,19 @@ std::chrono::time_point<std::chrono::system_clock> MessageUtils::getTimeFromStri
         return std::chrono::system_clock::from_time_t(mktime(&timeToWakeUpTm));
     } catch (...) {
         return now - std::chrono::hours(1);
+    }
+}
+
+std::chrono::duration<int> MessageUtils::getDurationFromString(const std::string &time) noexcept
+{
+    try {
+        tm duration_t;
+        strptime(time.c_str(), "%H:%M:%S", &duration_t);
+        std::chrono::duration<int> duration = std::chrono::seconds(duration_t.tm_sec);
+        duration += std::chrono::minutes(duration_t.tm_min);
+        duration += std::chrono::hours(duration_t.tm_hour);
+        return duration;
+    } catch (...) {
+        return std::chrono::seconds(0);
     }
 }

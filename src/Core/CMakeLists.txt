@@ -16,6 +16,8 @@ add_library(core
     Communication/Messages/PinOnMessage.cpp
     Communication/Messages/PinOffMessage.h
     Communication/Messages/PinOffMessage.cpp
+    Communication/Messages/PinOnAndOffMessage.h
+    Communication/Messages/PinOnAndOffMessage.cpp
     Communication/Messages/GetAvailablePinsMessage.h
     Communication/Messages/GetAvailablePinsMessage.cpp
     Communication/Messages/ReturnAvailablePinsMessage.h

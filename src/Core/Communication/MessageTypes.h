@@ -3,7 +3,15 @@
 
 namespace core
 {
-enum MessageType { EXIT, PIN_ON, PIN_OFF, GET_AVAILABLE_PIN_ALIASES, RETURN_AVAILABLE_PIN_ALIASES, NONE };
+enum MessageType {
+    EXIT,
+    PIN_ON,
+    PIN_OFF,
+    PIN_ON_AND_OFF,
+    GET_AVAILABLE_PIN_ALIASES,
+    RETURN_AVAILABLE_PIN_ALIASES,
+    NONE
+};
 }  // namespace core
 
 #endif

@@ -17,6 +17,7 @@ namespace MessageFactory
 std::shared_ptr<Message> makeMessage(const nlohmann::json &json) noexcept;
 static std::shared_ptr<Message> makePinOnMessage(const nlohmann::json &json) noexcept;
 static std::shared_ptr<Message> makePinOffMessage(const nlohmann::json &json) noexcept;
+static std::shared_ptr<Message> makePinOnAndOffMessage(const nlohmann::json &json) noexcept;
 }  // namespace MessageFactory
 }  // namespace core
 
