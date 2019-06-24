@@ -80,7 +80,13 @@ void TelegramBotModule::specificStart() noexcept
 
 void TelegramBotModule::update() noexcept
 {
-    m_longPoll->start();
+    try {
+        m_longPoll->start();
+    } catch (...) {
+        auto exitMessage = std::make_shared<Message>(MessageType::EXIT);
+        getOutputQueue()->push(exitMessage);
+        std::cout << "Network failed, closing the application" << std::endl;
+    }
     getInputQueue()->waitForPushIfEmpty(std::chrono::system_clock::now() + std::chrono::seconds(2));
     while (!getInputQueue()->isEmpty()) {
         std::shared_ptr<Message> message;
