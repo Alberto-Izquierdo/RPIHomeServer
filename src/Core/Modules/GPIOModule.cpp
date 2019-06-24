@@ -56,6 +56,10 @@ bool GPIOModule::init() noexcept
 
 GPIOModule::~GPIOModule() noexcept
 {
+    // Turn off every pin in case the application closes and any of them is on
+    for (auto &pair : m_pinsAssigned) {
+        m_gpioManager->setPinOff(pair.second);
+    }
 }
 
 void GPIOModule::specificStart() noexcept
