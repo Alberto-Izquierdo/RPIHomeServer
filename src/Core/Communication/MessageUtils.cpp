@@ -37,10 +37,17 @@ std::chrono::time_point<std::chrono::system_clock> MessageUtils::getTimeFromStri
     auto now = std::chrono::system_clock::now();
     try {
         time_t tmp = std::chrono::system_clock::to_time_t(now);
-        tm actualTime = *localtime(&tmp);
-        tm timeToWakeUpTm = actualTime;
-        strptime(time.c_str(), "%H:%M:%S", &timeToWakeUpTm);
-        return std::chrono::system_clock::from_time_t(mktime(&timeToWakeUpTm));
+        tm resultTM = *localtime(&tmp);
+        auto lastCharProcessed = strptime(time.c_str(), "%H:%M:%S", &resultTM);
+        if (lastCharProcessed != nullptr) {
+            auto result = std::chrono::system_clock::from_time_t(mktime(&resultTM));
+            if (result < now) {
+                result += std::chrono::hours(24);
+            }
+            return result;
+        } else {
+            return now - std::chrono::hours(1);
+        }
     } catch (...) {
         return now - std::chrono::hours(1);
     }
