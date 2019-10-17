@@ -9,5 +9,4 @@ add_subdirectory(Gpio)
 add_subdirectory(Core)
 target_link_libraries(iot_project PRIVATE core)
 
-set_property(TARGET iot_project PROPERTY CXX_STANDARD 11)
 SET(CMAKE_CXX_FLAGS -pthread)
