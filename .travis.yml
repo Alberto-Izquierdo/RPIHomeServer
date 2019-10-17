@@ -17,6 +17,7 @@ jobs:
         - python3 -m pip install --user virtualenv
         - python3 -m venv conan
         - source conan/bin/activate
+        - pip install wheel
         - pip install conan
 # Automatic detection of your arch, compiler, etc.
         - conan user
