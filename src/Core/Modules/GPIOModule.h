@@ -23,7 +23,7 @@ struct PinToTurnOff {
 };
 
 struct PinToTurnOffComparator {
-    bool operator()(const PinToTurnOff &lhs, const PinToTurnOff &rhs)
+    bool operator()(const PinToTurnOff &lhs, const PinToTurnOff &rhs) const
     {
         return lhs.timeToSwitchOff < rhs.timeToSwitchOff;
     }

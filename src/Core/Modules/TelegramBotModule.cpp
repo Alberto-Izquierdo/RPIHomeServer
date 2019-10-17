@@ -45,8 +45,7 @@ TelegramBotModule::TelegramBotModule(std::shared_ptr<MultithreadQueue<std::share
     auto token = config.find("token");
     if (token != config.end()) {
         if (token->is_string()) {
-            auto botPtr = new TgBot::Bot(token.value());
-            m_bot = std::unique_ptr<TgBot::Bot>(botPtr);
+            m_bot = std::make_unique<TgBot::Bot>(token.value());
         }
     }
     addMessageHandler(

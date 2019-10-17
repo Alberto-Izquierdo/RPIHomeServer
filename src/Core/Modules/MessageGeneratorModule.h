@@ -23,7 +23,7 @@ struct MessagesToLaunch {
 };
 
 struct MessageComparator {
-    bool operator()(const MessagesToLaunch &lhs, const MessagesToLaunch &rhs)
+    bool operator()(const MessagesToLaunch &lhs, const MessagesToLaunch &rhs) const
     {
         return lhs.nextTimeToLaunch < rhs.nextTimeToLaunch;
     }

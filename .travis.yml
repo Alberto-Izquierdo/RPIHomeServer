@@ -1,5 +1,5 @@
 language: cpp
-dist: xenial
+dist: bionic
 compiler: gcc
 
 addons:
@@ -8,6 +8,12 @@ addons:
       - python3
       - python3-pip
       - python3-venv
+      - gcc-8
+      - g++-8
+      - g++-8-arm-linux-gnueabi
+      - g++-8-arm-linux-gnueabihf
+      - gcc-8-arm-linux-gnueabi
+      - gcc-8-arm-linux-gnueabihf
 
 jobs:
   include:
@@ -27,12 +33,14 @@ jobs:
 # Install conan dependencies, cmake and make
         - mkdir build && cd build
         - conan install .. --build=missing --profile ../rpi_profile
-        - cmake .. -DCMAKE_TOOLCHAIN_FILE=../Toolchain-RaspberryPi.cmake -DCMAKE_BUILD_TYPE=Release
+        - cmake .. -DCMAKE_TOOLCHAIN_FILE=../Toolchain-RaspberryPi.cmake
 
       script:
         - make -j$(nproc)
     - stage: linux
       install:
+        - sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-8 90
+        - sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-8 90
 # Install conan
         - python3 -m pip install --user virtualenv
         - python3 -m venv conan
