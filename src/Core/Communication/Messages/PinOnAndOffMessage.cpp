@@ -9,6 +9,4 @@ PinOnAndOffMessage::PinOnAndOffMessage(const std::string &pinAlias, std::chrono:
 {
 }
 
-PinOnAndOffMessage::~PinOnAndOffMessage() noexcept
-{
-}
+PinOnAndOffMessage::~PinOnAndOffMessage() noexcept = default;

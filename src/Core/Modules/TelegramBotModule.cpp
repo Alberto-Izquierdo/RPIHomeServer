@@ -18,9 +18,7 @@
 
 using namespace core;
 
-const std::string TelegramBotModule::k_moduleName = "TelegramBot";
-
-TelegramBotModule::TelegramBotModule(std::shared_ptr<MultithreadQueue<std::shared_ptr<Message>>> &outputQueue,
+TelegramBotModule::TelegramBotModule(const std::shared_ptr<MultithreadQueue<std::shared_ptr<Message>>> &outputQueue,
                                      const nlohmann::json &config) noexcept
     : BaseModule(BaseModule::Type::TELEGRAM_BOT, outputQueue)
     , m_bot(nullptr)
@@ -66,7 +64,7 @@ bool TelegramBotModule::init() noexcept
                   << std::endl;
         return false;
     }
-    m_longPoll = std::unique_ptr<TgBot::TgLongPoll>(new TgBot::TgLongPoll(*m_bot, 100, 5));
+    m_longPoll = std::make_unique<TgBot::TgLongPoll>(*m_bot, 100, 5);
     return true;
 }
 
@@ -111,7 +109,7 @@ void TelegramBotModule::handleSpecificMessage(
     }
 }
 
-void TelegramBotModule::returnAvailableMessages(const std::shared_ptr<Message> message) noexcept
+void TelegramBotModule::returnAvailableMessages(const std::shared_ptr<Message> &message) noexcept
 {
     auto castedMessage = std::static_pointer_cast<ReturnAvailablePinsMessage>(message);
     const auto &pinsAvailable = castedMessage->getPinsAvailable();
@@ -180,11 +178,11 @@ void TelegramBotModule::welcomeMessage(std::shared_ptr<TgBot::Message> &message)
 
 void TelegramBotModule::sendButtons(int64_t messageId, const std::string &messageToShow)
 {
-    TgBot::ReplyKeyboardMarkup::Ptr keyboard(new TgBot::ReplyKeyboardMarkup());
+    auto keyboard = std::make_shared<TgBot::ReplyKeyboardMarkup>();
     keyboard->oneTimeKeyboard = false;
     std::vector<TgBot::KeyboardButton::Ptr> row;
     for (const auto &option : m_userButtons) {
-        TgBot::KeyboardButton::Ptr button(new TgBot::KeyboardButton);
+        auto button = std::make_shared<TgBot::KeyboardButton>();
         button->text = option;
         row.push_back(button);
     }

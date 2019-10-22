@@ -16,7 +16,7 @@ namespace core
 class TelegramBotModule : public BaseModule
 {
 public:
-    TelegramBotModule(std::shared_ptr<MultithreadQueue<std::shared_ptr<Message>>> &outputQueue,
+    TelegramBotModule(const std::shared_ptr<MultithreadQueue<std::shared_ptr<Message>>> &outputQueue,
                       const nlohmann::json &config) noexcept;
     ~TelegramBotModule() noexcept final;
 
@@ -24,15 +24,15 @@ public:
     void specificStart() noexcept final;
     void update() noexcept final;
     void specificExit() noexcept final;
-    const std::string &getModuleName() const noexcept final { return k_moduleName; }
+    std::string_view getModuleName() const noexcept final { return k_moduleName; }
 
-    void returnAvailableMessages(const std::shared_ptr<Message> message) noexcept;
+    void returnAvailableMessages(const std::shared_ptr<Message> &message) noexcept;
     void turnPinOn(std::shared_ptr<TgBot::Message> &message) noexcept;
     void turnPinOff(std::shared_ptr<TgBot::Message> &message) noexcept;
     void turnPinOnAndOff(std::shared_ptr<TgBot::Message> &message) noexcept;
     void welcomeMessage(std::shared_ptr<TgBot::Message> &message) noexcept;
 
-    static const std::string k_moduleName;
+    static constexpr const char *k_moduleName = "TelegramBot";
 
 private:
     bool isUserAuthorized(int userID) const noexcept;

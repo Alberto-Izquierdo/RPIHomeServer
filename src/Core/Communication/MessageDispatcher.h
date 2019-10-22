@@ -20,10 +20,12 @@ public:
 
     void setup(const std::vector<std::unique_ptr<BaseModule>> &modules) noexcept;
 
-    void handleMessage(const std::shared_ptr<Message> message) noexcept;
+    void handleMessage(const std::shared_ptr<Message> &message) noexcept;
 
 private:
-    std::unordered_map<MessageType, std::vector<std::shared_ptr<MultithreadQueue<std::shared_ptr<Message>>>>, std::hash<int>>
+    std::unordered_map<MessageType,
+                       std::vector<std::shared_ptr<MultithreadQueue<std::shared_ptr<Message>>>>,
+                       std::hash<int>>
         m_outputQueues;
 };
 }  // namespace core

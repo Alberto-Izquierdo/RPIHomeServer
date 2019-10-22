@@ -1,14 +1,10 @@
 #include <chrono>
 
 template <typename T>
-MultithreadQueue<T>::MultithreadQueue() noexcept
-{
-}
+MultithreadQueue<T>::MultithreadQueue() noexcept = default;
 
 template <typename T>
-MultithreadQueue<T>::~MultithreadQueue() noexcept
-{
-}
+MultithreadQueue<T>::~MultithreadQueue() noexcept = default;
 
 template <typename T>
 void MultithreadQueue<T>::push(T value) noexcept

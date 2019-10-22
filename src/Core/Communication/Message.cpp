@@ -7,7 +7,4 @@ Message::Message(MessageType type) noexcept
 {
 }
 
-Message::~Message() noexcept
-{
-}
-
+Message::~Message() noexcept = default;

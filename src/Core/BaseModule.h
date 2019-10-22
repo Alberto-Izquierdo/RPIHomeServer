@@ -19,13 +19,14 @@ class BaseModule
 {
 public:
     enum Type { COMMUNICATION, GPIO, TELEGRAM_BOT, MESSAGE_GENERATOR };
-    explicit BaseModule(Type type, std::shared_ptr<MultithreadQueue<std::shared_ptr<Message>>> outputQueue) noexcept;
+    explicit BaseModule(Type type,
+                        const std::shared_ptr<MultithreadQueue<std::shared_ptr<Message>>> &outputQueue) noexcept;
     virtual ~BaseModule() noexcept;
     explicit BaseModule() = delete;
 
     Type getType() const noexcept { return m_type; }
 
-    virtual const std::string &getModuleName() const noexcept = 0;
+    virtual std::string_view getModuleName() const noexcept = 0;
 
     virtual bool init() noexcept = 0;
 
@@ -35,11 +36,11 @@ public:
 
     virtual void specificStart() noexcept = 0;
 
-    void exit(const std::shared_ptr<Message> message) noexcept;
+    void exit(const std::shared_ptr<Message> &message) noexcept;
 
     virtual void specificExit() noexcept = 0;
 
-    virtual void handleMessage(const std::shared_ptr<Message> message) noexcept;
+    virtual void handleMessage(const std::shared_ptr<Message> &message) noexcept;
 
     std::vector<MessageType> getAcceptedMessages() const noexcept;
 
@@ -50,7 +51,7 @@ public:
     BaseModule &operator=(const BaseModule &) const = delete;
 
 protected:
-    using messageHanlderFunction = void (BaseModule::*)(const std::shared_ptr<Message>);
+    using messageHanlderFunction = void (BaseModule::*)(const std::shared_ptr<Message> &);
 
     void addMessageHandler(MessageType messageType, messageHanlderFunction function);
 

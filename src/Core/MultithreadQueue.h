@@ -17,7 +17,7 @@ public:
 
     void push(T value) noexcept;
     bool front(T &result) noexcept;
-    bool isEmpty() const noexcept;
+    [[nodiscard]] bool isEmpty() const noexcept;
     void waitForPushIfEmpty(std::chrono::time_point<std::chrono::system_clock> timeUntilWakeUp = {}) noexcept;
 
 private:

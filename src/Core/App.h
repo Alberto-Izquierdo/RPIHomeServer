@@ -19,7 +19,7 @@ class Message;
 class App
 {
 public:
-    static App &getInstance();
+    static App &getInstance() noexcept;
     bool init() noexcept;
 
     void start() noexcept;
@@ -27,10 +27,6 @@ public:
     void exit() noexcept;
 
     static void signalHandler(int signal);
-
-    // Delete copy/assign
-    App(const App &) = delete;
-    App &operator=(const App &) const = delete;
 
 private:
     App() noexcept;
@@ -40,7 +36,7 @@ private:
         std::shared_ptr<core::MultithreadQueue<std::shared_ptr<core::Message>>> &communicationQueue) noexcept;
     std::vector<std::unique_ptr<core::BaseModule>> m_modules;
     std::shared_ptr<GPIO::GpioManager> m_gpioManager;
-    std::vector<std::string> m_moduleNames;
+    const std::vector<std::string> m_moduleNames;
 };
 
 #endif  // APP_H

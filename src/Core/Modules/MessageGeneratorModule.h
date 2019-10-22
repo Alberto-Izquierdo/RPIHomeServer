@@ -11,10 +11,10 @@ namespace core
 struct MessagesToLaunch {
     explicit MessagesToLaunch(std::shared_ptr<Message> &message,
                               std::chrono::time_point<std::chrono::system_clock> &&nextTimeToLaunch,
-                              std::chrono::duration<int> &&frequency)
+                              std::chrono::duration<int> frequency)
         : message(message)
         , nextTimeToLaunch(nextTimeToLaunch)
-        , frequency(std::move(frequency))
+        , frequency(frequency)
     {
     }
     std::shared_ptr<Message> message;
@@ -32,7 +32,7 @@ struct MessageComparator {
 class MessageGeneratorModule : public BaseModule
 {
 public:
-    MessageGeneratorModule(std::shared_ptr<MultithreadQueue<std::shared_ptr<Message>>> &outputQueue,
+    MessageGeneratorModule(const std::shared_ptr<MultithreadQueue<std::shared_ptr<Message>>> &outputQueue,
                            const nlohmann::json &config) noexcept;
     ~MessageGeneratorModule() noexcept final;
 
@@ -40,9 +40,9 @@ public:
     void specificStart() noexcept final;
     void update() noexcept final;
     void specificExit() noexcept final;
-    const std::string &getModuleName() const noexcept final { return k_moduleName; }
+    std::string_view getModuleName() const noexcept final { return k_moduleName; }
 
-    static const std::string k_moduleName;
+    static constexpr const char *k_moduleName = "MessageGenerator";
 
 private:
     std::set<MessagesToLaunch, MessageComparator> m_messagesToLaunch;

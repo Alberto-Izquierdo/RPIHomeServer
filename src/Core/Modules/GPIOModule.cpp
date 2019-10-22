@@ -10,10 +10,8 @@
 
 using namespace core;
 
-const std::string GPIOModule::k_moduleName = "GPIO";
-
-GPIOModule::GPIOModule(std::shared_ptr<GPIO::GpioManager> &gpioManager,
-                       std::shared_ptr<MultithreadQueue<std::shared_ptr<Message>>> &outputQueue,
+GPIOModule::GPIOModule(const std::shared_ptr<GPIO::GpioManager> &gpioManager,
+                       const std::shared_ptr<MultithreadQueue<std::shared_ptr<Message>>> &outputQueue,
                        const nlohmann::json &config) noexcept
     : BaseModule(BaseModule::Type::GPIO, outputQueue)
     , m_gpioManager(gpioManager)
@@ -104,7 +102,7 @@ void GPIOModule::removePinToSwitchOffIfExists(const std::string &alias) noexcept
     }
 }
 
-void GPIOModule::handlePinChanged(const std::shared_ptr<Message> message) noexcept
+void GPIOModule::handlePinChanged(const std::shared_ptr<Message> &message) noexcept
 {
     if (message->getType() == MessageType::PIN_ON) {
         auto castedMessage = std::static_pointer_cast<PinOnMessage>(message);
@@ -119,7 +117,7 @@ void GPIOModule::handlePinChanged(const std::shared_ptr<Message> message) noexce
     }
 }
 
-void GPIOModule::handlePinOnAndOff(const std::shared_ptr<Message> message) noexcept
+void GPIOModule::handlePinOnAndOff(const std::shared_ptr<Message> &message) noexcept
 {
     auto castedMessage = std::static_pointer_cast<PinOnAndOffMessage>(message);
     const auto &alias = castedMessage->getPinAlias();
@@ -130,7 +128,7 @@ void GPIOModule::handlePinOnAndOff(const std::shared_ptr<Message> message) noexc
     m_pinsToTurnOff.emplace(alias, timeToSwitchOff);
 }
 
-void GPIOModule::getAvailableMessages(const std::shared_ptr<Message> message) noexcept
+void GPIOModule::getAvailableMessages(const std::shared_ptr<Message> &message) noexcept
 {
     auto castedMessage = std::static_pointer_cast<GetAvailablePinsMessage>(message);
     std::vector<std::string> pinsAssigned;
