@@ -15,11 +15,11 @@ public:
     bool init() noexcept final;
     void specificStart() noexcept final;
     void specificExit() noexcept final;
-    const std::string &getModuleName() const noexcept final { return k_moduleName; }
+    std::string_view getModuleName() const noexcept final { return k_moduleName; }
     void setup(const std::vector<std::unique_ptr<BaseModule>> &modules) noexcept;
-    void handleMessage(const std::shared_ptr<Message> message) noexcept final;
+    void handleMessage(const std::shared_ptr<Message> &message) noexcept final;
 
-    static const std::string k_moduleName;
+    static constexpr const char *k_moduleName = "Communication";
 
 private:
     std::unique_ptr<MessageDispatcher> m_messageDispatcher;

@@ -8,6 +8,4 @@ GetAvailablePinsMessage::GetAvailablePinsMessage(uint64_t chatId) noexcept
 {
 }
 
-GetAvailablePinsMessage::~GetAvailablePinsMessage() noexcept
-{
-}
+GetAvailablePinsMessage::~GetAvailablePinsMessage() noexcept = default;

@@ -4,7 +4,8 @@
 
 using namespace core;
 
-BaseModule::BaseModule(Type type, std::shared_ptr<MultithreadQueue<std::shared_ptr<Message>>> outputQueue) noexcept
+BaseModule::BaseModule(Type type,
+                       const std::shared_ptr<MultithreadQueue<std::shared_ptr<Message>>> &outputQueue) noexcept
     : m_type(type)
     , m_exit(false)
     , m_inputQueue(std::make_shared<MultithreadQueue<std::shared_ptr<Message>>>())
@@ -13,9 +14,7 @@ BaseModule::BaseModule(Type type, std::shared_ptr<MultithreadQueue<std::shared_p
     addMessageHandler(MessageType::EXIT, &BaseModule::exit);
 }
 
-BaseModule::~BaseModule() noexcept
-{
-}
+BaseModule::~BaseModule() noexcept = default;
 
 void BaseModule::update() noexcept
 {
@@ -38,13 +37,13 @@ void BaseModule::start() noexcept
     std::cout << getModuleName() << " module closing!" << std::endl;
 }
 
-void BaseModule::exit(const std::shared_ptr<Message> /*message*/) noexcept
+void BaseModule::exit(const std::shared_ptr<Message> & /*message*/) noexcept
 {
     specificExit();
     m_exit = true;
 }
 
-void BaseModule::handleMessage(const std::shared_ptr<Message> message) noexcept
+void BaseModule::handleMessage(const std::shared_ptr<Message> &message) noexcept
 {
     auto it = m_messageHandlers.find(message->getType());
     if (it != m_messageHandlers.end()) {

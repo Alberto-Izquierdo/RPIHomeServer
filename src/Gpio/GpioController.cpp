@@ -10,7 +10,7 @@ GpioController::GpioController(const std::string &pin)
 {
     std::string exportStr = "/sys/class/gpio/export";
     std::ofstream exportGpio(exportStr.c_str());
-    if (exportGpio.bad()){
+    if (exportGpio.bad()) {
         std::cout << "OPERATION FAILED: Unable to export GPIO" << m_pin << std::endl;
         return;
     }
@@ -19,7 +19,7 @@ GpioController::GpioController(const std::string &pin)
 
     std::string direction = "/sys/class/gpio/gpio" + m_pin + "/direction";
     std::ofstream directionGpio(direction.c_str());
-    if (directionGpio.bad()){
+    if (directionGpio.bad()) {
         std::cout << "OPERATION FAILED: Unable to set direction on GPIO" << m_pin << std::endl;
         return;
     }
@@ -32,7 +32,7 @@ GpioController::~GpioController()
     off();
     std::string unexportStr = "/sys/class/gpio/unexport";
     std::ofstream unexportGpio(unexportStr.c_str());
-    if (unexportGpio.bad()){
+    if (unexportGpio.bad()) {
         std::cout << "OPERATION FAILED: Unable to unexport GPIO" << m_pin << std::endl;
         return;
     }
@@ -54,7 +54,7 @@ bool GpioController::setValue(const std::string &value) noexcept
 {
     std::string setValStr = "/sys/class/gpio/gpio" + m_pin + "/value";
     std::ofstream setValGpio(setValStr.c_str());
-    if (setValGpio.bad()){
+    if (setValGpio.bad()) {
         std::cout << "OPERATION FAILED: Unable to set the value of GPIO" << m_pin << std::endl;
         return false;
     }

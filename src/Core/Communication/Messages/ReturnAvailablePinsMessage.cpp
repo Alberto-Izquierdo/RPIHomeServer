@@ -10,7 +10,4 @@ ReturnAvailablePinsMessage::ReturnAvailablePinsMessage(const std::vector<std::st
 {
 }
 
-ReturnAvailablePinsMessage::~ReturnAvailablePinsMessage() noexcept
-{
-}
-
+ReturnAvailablePinsMessage::~ReturnAvailablePinsMessage() noexcept = default;

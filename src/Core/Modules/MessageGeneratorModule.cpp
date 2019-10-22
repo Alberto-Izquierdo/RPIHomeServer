@@ -6,10 +6,9 @@
 
 using namespace core;
 
-const std::string MessageGeneratorModule::k_moduleName = "MessageGenerator";
-
-MessageGeneratorModule::MessageGeneratorModule(std::shared_ptr<MultithreadQueue<std::shared_ptr<Message>>> &outputQueue,
-                                               const nlohmann::json &config) noexcept
+MessageGeneratorModule::MessageGeneratorModule(
+    const std::shared_ptr<MultithreadQueue<std::shared_ptr<Message>>> &outputQueue,
+    const nlohmann::json &config) noexcept
     : BaseModule(BaseModule::Type::MESSAGE_GENERATOR, outputQueue)
 {
     auto messages = config.find("messages");

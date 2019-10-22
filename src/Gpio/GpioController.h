@@ -9,17 +9,13 @@ namespace GPIO
 class GpioController
 {
 public:
-    ~GpioController();
-
-private:
-    friend class GpioManager;
-
     explicit GpioController(const std::string &pin);
-    GpioController() = delete;
+    ~GpioController();
 
     bool on() noexcept;
     bool off() noexcept;
 
+private:
     bool setValue(const std::string &value) noexcept;
 
     std::string m_pin;

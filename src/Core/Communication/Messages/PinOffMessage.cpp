@@ -8,7 +8,4 @@ PinOffMessage::PinOffMessage(const std::string &pinAlias) noexcept
 {
 }
 
-PinOffMessage::~PinOffMessage() noexcept
-{
-}
-
+PinOffMessage::~PinOffMessage() noexcept = default;

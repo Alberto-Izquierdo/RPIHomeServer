@@ -34,6 +34,7 @@ MessageType MessageUtils::getMessageType(const std::string &typeName) noexcept
 
 std::chrono::time_point<std::chrono::system_clock> MessageUtils::getTimeFromString(const std::string &time) noexcept
 {
+    using namespace std::chrono_literals;
     auto now = std::chrono::system_clock::now();
     try {
         time_t tmp = std::chrono::system_clock::to_time_t(now);
@@ -42,14 +43,14 @@ std::chrono::time_point<std::chrono::system_clock> MessageUtils::getTimeFromStri
         if (lastCharProcessed != nullptr) {
             auto result = std::chrono::system_clock::from_time_t(mktime(&resultTM));
             if (result < now) {
-                result += std::chrono::hours(24);
+                result += 24h;
             }
             return result;
         } else {
-            return now - std::chrono::hours(1);
+            return now - 1h;
         }
     } catch (...) {
-        return now - std::chrono::hours(1);
+        return now - 1h;
     }
 }
 

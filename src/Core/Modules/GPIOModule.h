@@ -32,8 +32,8 @@ struct PinToTurnOffComparator {
 class GPIOModule : public BaseModule
 {
 public:
-    GPIOModule(std::shared_ptr<GPIO::GpioManager> &gpioManager,
-               std::shared_ptr<MultithreadQueue<std::shared_ptr<Message>>> &outputQueue,
+    GPIOModule(const std::shared_ptr<GPIO::GpioManager> &gpioManager,
+               const std::shared_ptr<MultithreadQueue<std::shared_ptr<Message>>> &outputQueue,
                const nlohmann::json &config) noexcept;
     ~GPIOModule() noexcept final;
 
@@ -41,23 +41,19 @@ public:
     void specificStart() noexcept final;
     void specificExit() noexcept final;
     void update() noexcept final;
-    const std::string &getModuleName() const noexcept final { return k_moduleName; }
+    std::string_view getModuleName() const noexcept final { return k_moduleName; }
 
-    void handlePinChanged(const std::shared_ptr<Message> message) noexcept;
-    void handlePinOnAndOff(const std::shared_ptr<Message> message) noexcept;
-    void getAvailableMessages(const std::shared_ptr<Message> message) noexcept;
+    void handlePinChanged(const std::shared_ptr<Message> &message) noexcept;
+    void handlePinOnAndOff(const std::shared_ptr<Message> &message) noexcept;
+    void getAvailableMessages(const std::shared_ptr<Message> &message) noexcept;
     void turnPinOn(std::string pinAlias) noexcept;
     void turnPinOff(std::string pinAlias) noexcept;
     void turnPinOnAndOff(std::string pinAlias, std::chrono::duration<int> duration) noexcept;
     void removePinToSwitchOffIfExists(const std::string &alias) noexcept;
-    /*
-    void turnLightOn(const std::shared_ptr<Message> message);
-    void turnLightOff(const std::shared_ptr<Message> message);
-    */
 
     GPIOModule() = delete;
 
-    static const std::string k_moduleName;
+    static constexpr const char *k_moduleName = "GPIO";
 
 private:
     std::shared_ptr<GPIO::GpioManager> m_gpioManager;
