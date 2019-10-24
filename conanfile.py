@@ -9,11 +9,14 @@ class RPIHomeServer(ConanFile):
     default_options = {"tgbot_cpp:shared": False}
 
     def requirements(self):
+        self.requires("grpc/1.23.0@inexorgame/stable")
         self.requires("tgbot_cpp/1.1@jgsogo/stable")
         self.requires("jsonformoderncpp/3.6.1@vthiery/stable")
         self.requires("Catch2/2.7.1@catchorg/stable")
         if self.settings.arch != "armv7":
             self.requires("OpenSSL/1.1.1c@conan/stable")
+        else:
+            self.requires("OpenSSL/1.0.2q@conan/stable")
 
     def build(self):
         cmake = CMake(self)
