@@ -1,7 +1,7 @@
 find_package(Protobuf REQUIRED)
 
-EXEC_PROGRAM(${PROTOBUF_PROTOC_EXECUTABLE} ARGS -I ${CMAKE_SOURCE_DIR}/protobuf_messages/ --grpc_out=${CMAKE_CURRENT_BINARY_DIR}/ --plugin=protoc-gen-grpc=`which grpc_cpp_plugin` ${CMAKE_SOURCE_DIR}/protobuf_messages/messages.proto)
-EXEC_PROGRAM(${PROTOBUF_PROTOC_EXECUTABLE} ARGS -I ${CMAKE_SOURCE_DIR}/protobuf_messages/ --cpp_out=${CMAKE_CURRENT_BINARY_DIR}/ ${CMAKE_SOURCE_DIR}/protobuf_messages/messages.proto)
+EXEC_PROGRAM(protoc ARGS -I ${CMAKE_SOURCE_DIR}/protobuf_messages/ --grpc_out=${CMAKE_CURRENT_BINARY_DIR}/ --plugin=protoc-gen-grpc=`which grpc_cpp_plugin` ${CMAKE_SOURCE_DIR}/protobuf_messages/messages.proto)
+EXEC_PROGRAM(protoc ARGS -I ${CMAKE_SOURCE_DIR}/protobuf_messages/ --cpp_out=${CMAKE_CURRENT_BINARY_DIR}/ ${CMAKE_SOURCE_DIR}/protobuf_messages/messages.proto)
 
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
@@ -41,7 +41,10 @@ add_library(core
     Modules/MessageGeneratorModule.cpp
     gRPC/GRPCServer.h
     gRPC/GRPCServer.cpp
-    ${PROTO_HDRS}
-    ${PROTO_SRCS})
+    #generated proto files
+    messages.pb.h
+    messages.pb.cc
+    messages.grpc.pb.h
+    messages.grpc.pb.cc)
 
 target_link_libraries(core PRIVATE gpio CONAN_PKG::jsonformoderncpp CONAN_PKG::tgbot_cpp CONAN_PKG::protobuf CONAN_PKG::grpc)

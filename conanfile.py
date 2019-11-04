@@ -13,6 +13,7 @@ class RPIHomeServer(ConanFile):
         self.requires("tgbot_cpp/1.1@jgsogo/stable")
         self.requires("jsonformoderncpp/3.6.1@vthiery/stable")
         self.requires("Catch2/2.7.1@catchorg/stable")
+        self.requires("protobuf/3.6.1@bincrafters/stable")
         if self.settings.arch != "armv7":
             self.requires("OpenSSL/1.1.1c@conan/stable")
         else:

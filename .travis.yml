@@ -1,5 +1,5 @@
 language: cpp
-dist: bionic
+dist: disco
 compiler: gcc
 
 addons:
@@ -14,6 +14,7 @@ addons:
       - g++-8-arm-linux-gnueabihf
       - gcc-8-arm-linux-gnueabi
       - gcc-8-arm-linux-gnueabihf
+      - libprotoc-dev
       - protobuf-compiler-grpc
 
 jobs:
