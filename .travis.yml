@@ -2,6 +2,11 @@ language: cpp
 dist: bionic
 compiler: gcc
 
+env:
+  matrix:
+    - TARGET=desktop
+    - TARGET=rpi
+
 addons:
   apt:
     packages:
@@ -15,45 +20,25 @@ addons:
       - gcc-8-arm-linux-gnueabi
       - gcc-8-arm-linux-gnueabihf
 
-jobs:
-  include:
-    - stage: linux
-      install:
-        - sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-8 90
-        - sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-8 90
+install:
+  - sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-8 90
+  - sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-8 90
 # Install conan
-        - python3 -m pip install --user virtualenv
-        - python3 -m venv conan
-        - source conan/bin/activate
-        - pip install conan
+  - python3 -m pip install --user virtualenv
+  - python3 -m venv conan
+  - source conan/bin/activate
+  - pip install conan
 # Automatic detection of your arch, compiler, etc.
-        - conan user
+  - conan user
 # Add conan remote repositories, clone rpi compiler
-        - ./setup-environment.sh
-# Install conan dependencies, cmake and make
-        - mkdir build && cd build
-        - conan install .. --build=missing
-        - cmake .. -DCMAKE_BUILD_TYPE=Release
+  - ./setup-environment.sh
 
-      script:
-        - make -j$(nproc)
-        - make test
-    - stage: RPI
-      install:
-# Install conan
-        - python3 -m pip install --user virtualenv
-        - python3 -m venv conan
-        - source conan/bin/activate
-        - pip install wheel
-        - pip install conan
-# Automatic detection of your arch, compiler, etc.
-        - conan user
-# Add conan remote repositories, clone rpi compiler
-        - ./setup-environment.sh
-# Install conan dependencies, cmake and make
-        - mkdir build && cd build
-        - conan install .. --build=missing --profile ../rpi_profile
-        - cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_TOOLCHAIN_FILE=../Toolchain-RaspberryPi.cmake
-
-      script:
-        - make -j$(nproc)
+script:
+  - if [ $TARGET == "desktop" ]; then
+    ./build.sh;
+    elif [ $TARGET == "rpi" ]; then
+    ./build-rpi.sh;
+    fi
+  - if [ $TARGET == "desktop" ]; then
+    cd build && make test;
+    fi
