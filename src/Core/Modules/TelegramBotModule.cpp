@@ -18,11 +18,14 @@
 
 using namespace core;
 
+const std::chrono::seconds TelegramBotModule::k_timeToSleepBetweenNetworkErrors = std::chrono::seconds(10);
+
 TelegramBotModule::TelegramBotModule(const std::shared_ptr<MultithreadQueue<std::shared_ptr<Message>>> &outputQueue,
                                      const nlohmann::json &config) noexcept
     : BaseModule(BaseModule::Type::TELEGRAM_BOT, outputQueue)
     , m_bot(nullptr)
     , m_longPoll(nullptr)
+    , m_networkErrors(0)
 {
     // Load users authorized
     auto users = config.find("users");
@@ -77,12 +80,27 @@ void TelegramBotModule::specificStart() noexcept
 
 void TelegramBotModule::update() noexcept
 {
+    bool errorHappened = false;
     try {
         m_longPoll->start();
     } catch (...) {
-        auto exitMessage = std::make_shared<Message>(MessageType::EXIT);
-        getOutputQueue()->push(exitMessage);
-        std::cout << "Network failed, closing the application" << std::endl;
+        auto now = std::chrono::system_clock::now();
+        errorHappened = true;
+        if (now - m_lastNetworkError < k_timeToSleepBetweenNetworkErrors + std::chrono::seconds(3)) {
+            if (m_networkErrors > 10) {
+                auto exitMessage = std::make_shared<Message>(MessageType::EXIT);
+                getOutputQueue()->push(exitMessage);
+                std::cout << "Network failed 10 times, closing the application" << std::endl;
+            } else {
+                ++m_networkErrors;
+                m_lastNetworkError = now;
+                std::this_thread::sleep_for(k_timeToSleepBetweenNetworkErrors);
+                std::cout << "Network failed, trying again..." << std::endl;
+            }
+        }
+    }
+    if (m_networkErrors != 0 && !errorHappened) {
+        m_networkErrors = 0;
     }
     getInputQueue()->waitForPushIfEmpty(std::chrono::system_clock::now() + std::chrono::seconds(2));
     while (!getInputQueue()->isEmpty()) {

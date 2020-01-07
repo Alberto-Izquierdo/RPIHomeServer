@@ -45,6 +45,9 @@ private:
     std::unique_ptr<TgBot::TgLongPoll> m_longPoll;
     std::vector<std::string> m_userButtons;
     std::vector<uint32_t> m_usersAuthorized;
+    int m_networkErrors;
+    std::chrono::time_point<std::chrono::system_clock> m_lastNetworkError;
+    static const std::chrono::seconds k_timeToSleepBetweenNetworkErrors;
 };
 }  // namespace core
 
